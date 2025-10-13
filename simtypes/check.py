@@ -2,7 +2,7 @@ from inspect import isclass
 
 try:
     from types import UnionType  # type: ignore[attr-defined]
-except ImportError:
+except ImportError:  # pragma: no cover
     from typing import Union as UnionType  # type: ignore[assignment]
 
 from typing import Type, Union, Optional, Any, get_args, get_origin
