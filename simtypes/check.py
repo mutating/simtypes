@@ -23,8 +23,7 @@ def check(type: Type[Any], value: Any) -> bool:
     elif origin_type is Optional:
         if value is None:
             return True
-        else:
-            return check(get_args(type)[0], value)
+        return check(get_args(type)[0], value)
 
     else:
         if origin_type is not None:
