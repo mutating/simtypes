@@ -3,7 +3,7 @@ from inspect import isclass
 try:
     from types import UnionType
 except ImportError:
-    from typing import Union as UnionType
+    from typing import Union as UnionType  # type: ignore[assignment]
 
 from typing import Type, Union, Optional, Any, get_args, get_origin
 
