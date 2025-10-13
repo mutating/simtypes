@@ -73,7 +73,9 @@ def test_empty_union_old_pythons():
 
 @pytest.mark.skipif(sys.version_info < (3, 14), reason="Before Python 3.14, you couldn't just use Union as an annotation.")
 def test_empty_union():
-    assert check(Union, None)
+    assert check(Union, None) == False
+    assert check(Union, 1) == False
+    assert check(Union, 'kek') == False
 
 
 def test_empty_optional():
