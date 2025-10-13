@@ -1,4 +1,8 @@
-from types import NoneType
+try:
+    from types import NoneType
+except ImportError:
+    NoneType = type(None)
+
 from typing import List, Dict, Tuple, Set, Optional, Any, Union
 
 import pytest
