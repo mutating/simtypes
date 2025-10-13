@@ -46,6 +46,6 @@ Also, we are not trying to cover the whole chasm of semantics that, for example,
 
 What exactly does this library support:
 
-- The basis of everything is the simplest type checking via [isinstance](https://docs.python.org/3/library/functions.html#isinstance). If you don't use any special types from typing, expect direct type matching.
-- Union support. You can combine the two types through a logical OR.
-
+- The basis of everything is the simplest type checking via [`isinstance`](https://docs.python.org/3/library/functions.html#isinstance). If you don't use any special types from `typing`, expect direct type matching.
+- `Union` support. You can combine the two types through a logical OR.
+- Checking the `Optional` type and `None` as an annotation.
