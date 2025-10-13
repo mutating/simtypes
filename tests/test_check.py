@@ -1,3 +1,5 @@
+import sys
+
 try:
     from types import NoneType  # type: ignore[attr-defined]
 except ImportError:
@@ -82,6 +84,7 @@ def test_union():
     assert check(Union[int, str], None) is False
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason='Union type expressions appeared in Python 3.10')
 def test_union_new_style():
     assert check(int | str, 1) is True
     assert check(int | str, 'hello') is True
@@ -113,6 +116,7 @@ def test_union_recursive():
     assert check(Union[Union[float, str], int], set()) is False
 
 
+@pytest.mark.skipif(sys.version_info < (3, 10), reason='Union type expressions appeared in Python 3.10')
 def test_new_style_union_is_recursive():
     assert check(int | float | str, 1) is True
     assert check(int | float | str, 1.0) is True
@@ -179,7 +183,8 @@ def test_optional():
     assert check(Optional[list], []) is True
 
 
-def test_new_styleoptional():
+@pytest.mark.skipif(sys.version_info < (3, 10), reason='Union type expressions appeared in Python 3.10')
+def test_new_style_optional():
     assert check(int | None, None) is True
     assert check(int | None, 1) is True
     assert check(int | None, 0) is True
