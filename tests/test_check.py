@@ -1,7 +1,7 @@
 try:
     from types import NoneType
 except ImportError:
-    NoneType = type(None)
+    NoneType = type(None)  # type: ignore[misc]
 
 from typing import List, Dict, Tuple, Set, Optional, Any, Union
 
