@@ -1,5 +1,10 @@
 from inspect import isclass
-from types import UnionType
+
+try:
+    from types import UnionType
+except ImportError:
+    from typing import Union as UnionType
+
 from typing import Type, Union, Optional, Any, get_args, get_origin
 
 
