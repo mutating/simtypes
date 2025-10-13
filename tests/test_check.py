@@ -4,6 +4,7 @@ except ImportError:
     NoneType = type(None)  # type: ignore[misc]
 
 from typing import List, Dict, Tuple, Set, Optional, Any, Union
+from collections.abc import Sequence
 
 import pytest
 from full_match import match
@@ -421,3 +422,16 @@ def test_simle_isinstance():
     assert check(SomeType, 1) == False
     assert check(SomeType, 'SomeType') == False
     assert check(SomeType, 1.5) == False
+
+
+def test_sequence():
+    assert check(Sequence, [1, 2, 3])
+    assert check(Sequence, (1, 2, 3))
+    assert check(Sequence, 'kek')
+
+    assert check(Sequence, 1) == False
+
+
+def test_sequence_is_not_checking_content():
+    assert check(Sequence[str], (1, 2, 3))
+    assert check(Sequence[str], [1, 2, 3])
