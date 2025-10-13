@@ -1,7 +1,7 @@
 from inspect import isclass
 
 try:
-    from types import UnionType
+    from types import UnionType  # type: ignore[attr-defined]
 except ImportError:
     from typing import Union as UnionType  # type: ignore[assignment]
 
