@@ -57,3 +57,23 @@ And that's what's not here:
 - Support for string annotations.
 
 If you need more complex semantics, use static validation tools. If you need strange and expensive runtime checks that try to confuse static semantics by adding thousands of exceptions, use other runtime tools. Use this library if you need a MINIMUM.
+
+
+## Usage
+
+Import the `check` function:
+
+```python
+from simtypes import check
+```
+
+And pass there 2 arguments, a type or type annotation + value:
+
+```python
+print(check(int, 1))
+#> True
+print(check(str, 1))
+#> False
+```
+
+> ↑ As you can see, the function returns `True` or `False`, depending on whether the value matches its annotation.
