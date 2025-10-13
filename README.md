@@ -36,7 +36,7 @@ You can also quickly try out this and other packages without having to install u
 
 ## Why?
 
-It's been a long time since static type checking tools like mypy for Python have been available, and they've become very complex. The typing system has also become noticeably more complicated, providing us with more and more new types of annotations, new syntax and other tools. It seems that Python devs procrastinate endlessly, postponing all the really important CPyhton improvements in order to add more garbage to typing.
+It's been a long time since static type checking tools like [`mypy`](https://github.com/python/mypy) for `Python` have been available, and they've become very complex. The typing system has also become noticeably more complicated, providing us with more and more new types of annotations, new syntax and other tools. It seems that `Python` devs procrastinate endlessly, postponing all the really important [`CPyhton`](https://github.com/python/cpython) improvements in order to add more garbage to [`typing`]().
 
 A separate difficulty arises for those who try to use type annotations in runtime. The fact is that many data types make sense only in the context of static validation, and there is no way to verify these aspects in runtime. And some checks, although theoretically possible, would be extremely expensive. For example, to verify the validity of annotation `List[int]` in relation to a list, you would need to go through all its objects linearly to make sure that none of them violates the contract from the annotation.
 
@@ -47,7 +47,7 @@ Also, we are not trying to cover the whole chasm of semantics that, for example,
 What exactly does this library support:
 
 - The basis of everything is the simplest type checking via [`isinstance`](https://docs.python.org/3/library/functions.html#isinstance). If you don't use any special types from `typing`, expect direct type matching.
-- `Union` support. You can combine the two types through a logical OR.
+- [`Union`](https://docs.python.org/3/library/typing.html#typing.Union) support. You can combine the two types through a logical OR.
 - Checking the `Optional` type and `None` as an annotation.
 
 And that's what's not here:
