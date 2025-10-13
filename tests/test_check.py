@@ -178,6 +178,34 @@ def test_optional():
     assert check(Optional[list], []) is True
 
 
+def test_new_styleoptional():
+    assert check(int | None, None) is True
+    assert check(int | None, 1) is True
+    assert check(int | None, 0) is True
+    assert check(int | None, -1000) is True
+
+    assert check(int | None, 1.0) is False
+    assert check(int | None, '1.0') is False
+    assert check(int | None, 'kek') is False
+    assert check(int | None, 'None') is False
+    assert check(int | None, [1, 2, 3]) is False
+    assert check(int | None, ('kek',)) is False
+    assert check(int | None, (1, 2, 3)) is False
+    assert check(int | None, set()) is False
+
+    assert check(str | None, None) is True
+    assert check(str | None, '1') is True
+    assert check(str | None, 'kek') is True
+    assert check(str | None, '') is True
+
+    assert check(str | None, 1.0) is False
+    assert check(str | None, 1) is False
+    assert check(str | None, ['kek']) is False
+
+    assert check(List | None, []) is True
+    assert check(list | None, []) is True
+
+
 def test_optional_union():
     assert check(Optional[Union[int, str]], None) is True
     assert check(Optional[Union[int, str]], 1) is True
