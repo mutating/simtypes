@@ -13,7 +13,7 @@
 [![DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/pomponchik/simtypes)
 
 
-Python type checking tools are usually very complex. In this case, we have thrown out almost all the places where there is a lot of complexity, and left only the most obvious and necessary things.
+Python type checking tools are usually very complex. In this case, we have thrown out almost all the places where there is a lot of complexity, and left only the most obvious and necessary things for runtime.
 
 
 ## Table of contents
