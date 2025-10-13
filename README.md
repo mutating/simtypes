@@ -14,3 +14,24 @@
 
 
 Python type checking tools are usually very complex. In this case, we have thrown out almost all the places where there is a lot of complexity, and left only the most obvious and necessary things.
+
+
+## Table of contents
+
+- [**Installation**](#installation)
+- [**Why?**](#why)
+- [**Usage**](#usage)
+
+
+## Installation
+
+You can install [`simtypes`](https://pypi.python.org/pypi/simtypes) using pip:
+
+```bash
+pip install simtypes
+```
+
+You can also quickly try out this and other packages without having to install using [instld](https://github.com/pomponchik/instld).
+
+
+## Why?
