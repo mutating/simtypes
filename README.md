@@ -36,4 +36,4 @@ You can also quickly try out this and other packages without having to install u
 
 ## Why?
 
-It's been a long time since static type checking tools like mypy for Python have been available, and they've become very complex. The typing system has also become noticeably more complicated, providing us with more and more new types of annotations, new syntax and other tools. It seems that Python developers procrastinate endlessly, postponing all the really important improvements to CPyhton and in return for all this garbage.
+It's been a long time since static type checking tools like mypy for Python have been available, and they've become very complex. The typing system has also become noticeably more complicated, providing us with more and more new types of annotations, new syntax and other tools. It seems that Python devs procrastinate endlessly, postponing all the really important CPyhton improvements in order to add more garbage to typing.
