@@ -63,12 +63,12 @@ def test_any():
 
 
 def test_empty_union():
-    with pytest.raises(ValueError, match=match('Type must be a type object.')):
+    with pytest.raises(ValueError, match=match('Type must be a valid type object.')):
         check(Union, None)
 
 
 def test_empty_optional():
-    with pytest.raises(ValueError, match=match('Type must be a type object.')):
+    with pytest.raises(ValueError, match=match('Type must be a valid type object.')):
         check(Optional, None)
 
 
@@ -373,13 +373,13 @@ def test_content_of_set_is_not_checking():
 
 
 def test_try_to_pass_not_type_object_as_type():
-    with pytest.raises(ValueError, match=match('Type must be a type object.')):
+    with pytest.raises(ValueError, match=match('Type must be a valid type object.')):
         check(1, 1)
 
-    with pytest.raises(ValueError, match=match('Type must be a type object.')):
+    with pytest.raises(ValueError, match=match('Type must be a valid type object.')):
         check('1', 1)
 
-    with pytest.raises(ValueError, match=match('Type must be a type object.')):
+    with pytest.raises(ValueError, match=match('Type must be a valid type object.')):
         check('SomeClass', 1)
 
 
