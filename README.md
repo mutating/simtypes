@@ -18,20 +18,9 @@ Python type checking tools are usually very complex. In this case, we have throw
 
 ## Table of contents
 
-- [**Installation**](#installation)
 - [**Why?**](#why)
+- [**Installation**](#installation)
 - [**Usage**](#usage)
-
-
-## Installation
-
-You can install [`simtypes`](https://pypi.python.org/pypi/simtypes) using pip:
-
-```bash
-pip install simtypes
-```
-
-You can also quickly try out this and other packages without having to install using [instld](https://github.com/pomponchik/instld).
 
 
 ## Why?
@@ -57,6 +46,17 @@ And that's what's not here:
 - Support for string annotations.
 
 If you need more complex semantics, use static validation tools. If you need strange and expensive runtime checks that try to confuse static semantics by adding thousands of exceptions, use other runtime tools. Use this library if you need a MINIMUM.
+
+
+## Installation
+
+You can install [`simtypes`](https://pypi.python.org/pypi/simtypes) using pip:
+
+```bash
+pip install simtypes
+```
+
+You can also quickly try out this and other packages without having to install using [instld](https://github.com/pomponchik/instld).
 
 
 ## Usage
