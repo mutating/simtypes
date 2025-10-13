@@ -355,6 +355,7 @@ def test_dict_without_arguments():
     assert check(Dict, Dict) == False
 
 
+@pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
 def test_content_of_list_is_not_checking():
     assert check(list[int], [])
     assert check(list[int], ['lol', 'kek'])
@@ -369,6 +370,7 @@ def test_content_of_list_is_not_checking():
     assert check(List[int], [None, 'kek', 1, 1.0])
 
 
+@pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
 def test_content_of_tuple_is_not_checking():
     assert check(tuple[int], ())
     assert check(tuple[int], ('lol', 'kek'))
@@ -383,6 +385,7 @@ def test_content_of_tuple_is_not_checking():
     assert check(Tuple[int], (None, 'kek', 1, 1.0))
 
 
+@pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
 def test_content_of_dict_is_not_checking():
     assert check(dict[int, int], {})
     assert check(dict[int, int], {1: 'kek'})
@@ -397,6 +400,7 @@ def test_content_of_dict_is_not_checking():
     assert check(Dict[int, int], {1.0: 1})
 
 
+@pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
 def test_content_of_set_is_not_checking():
     assert check(set[int], set())
     assert check(set[int], set(['lol', 'kek']))
@@ -437,6 +441,7 @@ def test_sequence():
     assert check(Sequence, 1) == False
 
 
+@pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
 def test_sequence_is_not_checking_content():
     assert check(Sequence[str], (1, 2, 3))
     assert check(Sequence[str], [1, 2, 3])
