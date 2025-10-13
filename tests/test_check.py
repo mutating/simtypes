@@ -1,5 +1,5 @@
 try:
-    from types import NoneType
+    from types import NoneType  # type: ignore[attr-defined]
 except ImportError:
     NoneType = type(None)  # type: ignore[misc]
 
