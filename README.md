@@ -1,4 +1,4 @@
-# simtypes: type checking in runtime without five-dimensional chess
+![logo](https://raw.githubusercontent.com/pomponchik/simtypes/develop/docs/assets/logo_1.svg)
 
 [![Downloads](https://static.pepy.tech/badge/simtypes/month)](https://pepy.tech/project/simtypes)
 [![Downloads](https://static.pepy.tech/badge/simtypes)](https://pepy.tech/project/simtypes)
