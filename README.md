@@ -42,7 +42,7 @@ A separate difficulty arises for those who try to use type annotations in runtim
 
 So, why do we need this package? There is only one function where you can pass a type or a type annotation + a specific value, and you will find out if one corresponds to the other. That's it! You can use this feature as a support when creating runtime type checking tools, however, we do not offer these tools here. You decide for yourself whether to wrap this function in syntactic sugar like decorators with automatic type checking.
 
-Also, we are not trying to cover the whole chasm of semantics that, for example, mypy can track. Our approach is to make type checking as stupid as possible. This is the only way to avoid the silly typing games that complex tools impose on us.
+Also, we are not trying to cover the whole chasm of semantics that, for example, `mypy` can track. Our approach is to make type checking as stupid as possible. This is the only way to avoid the stupid typing games that complex tools impose on us.
 
 What exactly does this library support:
 
