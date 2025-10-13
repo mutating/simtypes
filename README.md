@@ -54,5 +54,6 @@ And that's what's not here:
 
 - Supports types with complex semantics from the [`typing`](https://docs.python.org/3/library/typing.html) module.
 - Checking the contents of collections. Collections are checked only for the base type.
+- Support for string annotations.
 
 If you need more complex semantics, use static validation tools. If you need strange and expensive runtime checks that try to confuse static semantics by adding thousands of exceptions, use other runtime tools. Use this library if you need a MINIMUM.
