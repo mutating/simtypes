@@ -37,8 +37,8 @@ What exactly does this library support:
 
 - The basis of everything is the simplest type checking via [`isinstance`](https://docs.python.org/3/library/functions.html#isinstance). If you don't use any special types from [`typing`](https://docs.python.org/3/library/typing.html), expect direct type matching.
 - [`Union`](https://docs.python.org/3/library/typing.html#typing.Union) support. You can combine the two types through a logical OR.
-- Checking the `Optional` type and `None` as an annotation.
-- Using `Any` annotation.
+- Checking the [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional) type and `None` as an annotation.
+- Using [`Any`](https://docs.python.org/3/library/typing.html#typing.Any) annotation.
 
 And that's what's not here:
 
