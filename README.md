@@ -1,4 +1,4 @@
-![logo](https://raw.githubusercontent.com/pomponchik/simtypes/develop/docs/assets/logo_1.svg)
+![logo](https://raw.githubusercontent.com/pomponchik/simtypes/develop/docs/assets/logo_2.svg)
 
 [![Downloads](https://static.pepy.tech/badge/simtypes/month)](https://pepy.tech/project/simtypes)
 [![Downloads](https://static.pepy.tech/badge/simtypes)](https://pepy.tech/project/simtypes)
@@ -37,7 +37,8 @@ What exactly does this library support:
 
 - The basis of everything is the simplest type checking via [`isinstance`](https://docs.python.org/3/library/functions.html#isinstance). If you don't use any special types from [`typing`](https://docs.python.org/3/library/typing.html), expect direct type matching.
 - [`Union`](https://docs.python.org/3/library/typing.html#typing.Union) support. You can combine the two types through a logical OR.
-- Checking the `Optional` type and `None` as an annotation.
+- Checking the [`Optional`](https://docs.python.org/3/library/typing.html#typing.Optional) type and `None` as an annotation.
+- Using [`Any`](https://docs.python.org/3/library/typing.html#typing.Any) annotation.
 
 And that's what's not here:
 
@@ -74,6 +75,28 @@ print(check(int, 1))
 #> True
 print(check(str, 1))
 #> False
+print(check(Any, 1))
+#> True
+print(check(Any, 'kek'))
+#> True
+print(check(List, 1))
+#> False
+print(check(List, [1]))
+#> True
+print(check(List[int], [1]))
+#> True
+print(check(List[int], ['kek']))  # Attention! The tool does not check the contents of the list in runtime.
+#> True
+print(check(Optional[int], 1))
+#> True
+print(check(Optional[int], None))
+#> True
+print(check(Optional[str], 1))
+#> False
+print(check(None, 1))
+#> False
+print(check(None, None))
+#> True
 ```
 
 > ↑ As you can see, the function returns `True` or `False`, depending on whether the value matches its annotation.
