@@ -93,6 +93,10 @@ print(check(Optional[int], None))
 #> True
 print(check(Optional[str], 1))
 #> False
+print(check(None, 1))
+#> False
+print(check(None, None))
+#> True
 ```
 
 > ↑ As you can see, the function returns `True` or `False`, depending on whether the value matches its annotation.
