@@ -25,7 +25,7 @@ def check(value: ExpectedType, type: Type[ExpectedType]) -> TypeIs[ExpectedType]
     origin_type = get_origin(type)
 
     if origin_type is Union or origin_type is UnionType:
-        return any(check(argument, value) for argument in get_args(type))
+        return any(check(value, argument) for argument in get_args(type))
 
     else:
         if origin_type is not None:
