@@ -5,7 +5,12 @@ try:
 except ImportError:  # pragma: no cover
     from typing import Union as UnionType  # type: ignore[assignment]
 
-from typing import TypeVar, TypeIs, Type, Union, Any, get_args, get_origin
+try:
+    from typing import TypeIs  # type: ignore[attr-defined]
+except ImportError:  # pragma: no cover
+    from typing_extensions import TypeIs
+
+from typing import TypeVar, Type, Union, Any, get_args, get_origin
 
 
 ExpectedType = TypeVar('ExpectedType')
