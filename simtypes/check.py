@@ -15,8 +15,8 @@ from typing import TypeVar, Type, Union, Any, get_args, get_origin
 
 ExpectedType = TypeVar('ExpectedType')
 
-def check(type: Type[Any], value: Any) -> TypeIs[ExpectedType]:
-    if type is Any:  # type: ignore[comparison-overlap]
+def check(value: ExpectedType, type: Type[ExpectedType]) -> TypeIs[ExpectedType]:
+    if type is Any:  # type: ignore[attr-defined]
         return True
 
     elif type is None:
