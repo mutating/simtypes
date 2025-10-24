@@ -68,32 +68,32 @@ Import the `check` function:
 from simtypes import check
 ```
 
-And pass there 2 arguments, a type or type annotation + value:
+And pass there 2 arguments, a value + a type or type annotation:
 
 ```python
-print(check(int, 1))
+print(check(1, int))
 #> True
-print(check(str, 1))
+print(check(1, str))
 #> False
-print(check(Any, 1))
+print(check(1, Any))
 #> True
-print(check(Any, 'kek'))
+print(check('kek', Any))
 #> True
-print(check(List, 1))
+print(check(1, List))
 #> False
-print(check(List, [1]))
+print(check([1], List))
 #> True
-print(check(List[int], [1]))
+print(check([1], List[int]))
 #> True
-print(check(List[int], ['kek']))  # Attention! The tool does not check the contents of the list in runtime.
+print(check(['kek'], List[int]))  # Attention! The tool does not check the contents of the list in runtime.
 #> True
-print(check(Optional[int], 1))
+print(check(1, Optional[int]))
 #> True
-print(check(Optional[int], None))
+print(check(None, Optional[int]))
 #> True
-print(check(Optional[str], 1))
+print(check(1, Optional[str]))
 #> False
-print(check(None, 1))
+print(check(1, None))
 #> False
 print(check(None, None))
 #> True
