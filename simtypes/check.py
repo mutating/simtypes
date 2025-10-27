@@ -15,7 +15,7 @@ from typing import TypeVar, Type, Union, Any, get_args, get_origin
 
 ExpectedType = TypeVar('ExpectedType')
 
-def check(value: ExpectedType, type: Type[ExpectedType]) -> TypeIs[ExpectedType]:
+def check(value: Any, type: Type[ExpectedType]) -> TypeIs[ExpectedType]:
     if type is Any:  # type: ignore[attr-defined]
         return True
 
