@@ -10,7 +10,7 @@ try:
 except ImportError:  # pragma: no cover
     from typing_extensions import TypeIs
 
-from typing import List, TypeVar, Type, Union, Any, get_args, get_origin
+from typing import TypeVar, Type, Union, Any, get_args, get_origin
 
 
 ExpectedType = TypeVar('ExpectedType')
