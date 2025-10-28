@@ -32,6 +32,11 @@ def check(value: Any, type: Type[ExpectedType], strict: bool = False) -> TypeIs[
             return False
         return all(check(subvalue, get_args(type)[0], strict=strict) for subvalue in value)
 
+    elif origin_type is dict and strict:
+        if not isinstance(value, dict):
+            return False
+        return all(check(key, get_args(type)[0], strict=strict) and check(subvalue, get_args(type)[1], strict=strict) for key, subvalue in value.items())
+
     else:
         if origin_type is not None:
             return isinstance(value, origin_type)
