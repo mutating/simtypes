@@ -455,31 +455,23 @@ def test_sequence_is_not_checking_content():
     assert check([1, 2, 3], Sequence[str])
 
 
-def test_list_with_values_in_strict_mode():
-    assert check([], List[int], strict=True)
-    assert check([], List[str], strict=True)
+@pytest.mark.parametrize(
+    ['base_type'],
+    [
+        (List,),
+        (list,),
+    ],
+)
+def test_list_with_values_in_strict_mode(base_type):
+    assert check([], base_type[int], strict=True)
+    assert check([], base_type[str], strict=True)
 
-    assert check([1, 2, 3], List[int], strict=True)
-    assert check(['1', '2', '3'], List[str], strict=True)
+    assert check([1, 2, 3], base_type[int], strict=True)
+    assert check(['1', '2', '3'], base_type[str], strict=True)
 
-    assert not check([1, 2, 3], List[str], strict=True)
-    assert not check(['1', '2', 3], List[int], strict=True)
-    assert not check(['1', '2', '3'], List[int], strict=True)
+    assert not check([1, 2, 3], base_type[str], strict=True)
+    assert not check(['1', '2', 3], base_type[int], strict=True)
+    assert not check(['1', '2', '3'], base_type[int], strict=True)
 
-    assert not check((1, 2, 3), List[str], strict=True)
-    assert not check("123", List[str], strict=True)
-
-
-def test_new_style_list_with_values_in_strict_mode():
-    assert check([], list[int], strict=True)
-    assert check([], list[str], strict=True)
-
-    assert check([1, 2, 3], list[int], strict=True)
-    assert check(['1', '2', '3'], list[str], strict=True)
-
-    assert not check([1, 2, 3], list[str], strict=True)
-    assert not check(['1', '2', 3], list[int], strict=True)
-    assert not check(['1', '2', '3'], list[int], strict=True)
-
-    assert not check((1, 2, 3), list[str], strict=True)
-    assert not check("123", list[str], strict=True)
+    assert not check((1, 2, 3), base_type[str], strict=True)
+    assert not check("123", base_type[str], strict=True)
