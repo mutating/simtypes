@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "simtypes"
-version = "0.0.2"
+version = "0.0.3"
 authors = [{ name = "Evgeniy Blinov", email = "zheni-b@yandex.ru" }]
 description = 'Type checking in runtime without stupid games'
 readme = "README.md"
 requires-python = ">=3.8"
-dependencies = []
+dependencies = ['typing_extensions ; python_version <= "3.12"']
 
 classifiers = [
     "Operating System :: OS Independent",
