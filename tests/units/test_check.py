@@ -455,8 +455,16 @@ def test_sequence_is_not_checking_content():
     assert check([1, 2, 3], Sequence[str])
 
 
-def test_list_with_values_in_strict_mode_old_style():
-    base_type = List
+@pytest.mark.parametrize(
+    ['base_type'],
+    [
+        (List,),
+        (list,),
+    ],
+)
+def test_list_with_values_in_strict_mode(base_type):
+    if sys.version_info < (3, 9) and base_type is list:
+        return
 
     assert check([], base_type[int], strict=True)
     assert check([], base_type[str], strict=True)
@@ -476,23 +484,16 @@ def test_list_with_values_in_strict_mode_old_style():
     assert not check([1, 2, 3, 4, [1, 2, '3']], base_type[Union[int, base_type[int]]], strict=True)
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason='Using list as a type annotation is available since Pyhton 3.9')
-def test_list_with_values_in_strict_mode_new_style():
-    base_type = list
+@pytest.mark.parametrize(
+    ['base_type'],
+    [
+        (Dict,),
+        (dict,),
+    ],
+)
+def test_list_with_values_in_strict_mode(base_type):
+    if sys.version_info < (3, 9) and base_type is dict:
+        return
 
-    assert check([], base_type[int], strict=True)
-    assert check([], base_type[str], strict=True)
-
-    assert check([1, 2, 3], base_type[int], strict=True)
-    assert check(['1', '2', '3'], base_type[str], strict=True)
-
-    assert check([1, 2, 3, 4, [1, 2, 3]], base_type[Union[int, base_type[int]]], strict=True)
-
-    assert not check([1, 2, 3], base_type[str], strict=True)
-    assert not check(['1', '2', 3], base_type[int], strict=True)
-    assert not check(['1', '2', '3'], base_type[int], strict=True)
-
-    assert not check((1, 2, 3), base_type[str], strict=True)
-    assert not check("123", base_type[str], strict=True)
-
-    assert not check([1, 2, 3, 4, [1, 2, '3']], base_type[Union[int, base_type[int]]], strict=True)
+    assert check({}, base_type[int, int], strict=True)
+    assert check({}, base_type[str, str], strict=True)
