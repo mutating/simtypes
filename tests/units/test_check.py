@@ -453,3 +453,15 @@ def test_sequence():
 def test_sequence_is_not_checking_content():
     assert check((1, 2, 3), Sequence[str])
     assert check([1, 2, 3], Sequence[str])
+
+
+def test_list_with_values_in_strict_mode():
+    assert check([], List[int], strict=True)
+    assert check([], List[str], strict=True)
+
+    assert check([1, 2, 3], List[int], strict=True)
+    assert check(['1', '2', '3'], List[str], strict=True)
+
+    assert not check([1, 2, 3], List[str], strict=True)
+    assert not check(['1', '2', 3], List[int], strict=True)
+    assert not check(['1', '2', '3'], List[int], strict=True)

@@ -10,12 +10,12 @@ try:
 except ImportError:  # pragma: no cover
     from typing_extensions import TypeIs
 
-from typing import TypeVar, Type, Union, Any, get_args, get_origin
+from typing import List, TypeVar, Type, Union, Any, get_args, get_origin
 
 
 ExpectedType = TypeVar('ExpectedType')
 
-def check(value: Any, type: Type[ExpectedType]) -> TypeIs[ExpectedType]:
+def check(value: Any, type: Type[ExpectedType], strict: bool = False) -> TypeIs[ExpectedType]:
     if type is Any:  # type: ignore[attr-defined]
         return True
 
@@ -25,7 +25,12 @@ def check(value: Any, type: Type[ExpectedType]) -> TypeIs[ExpectedType]:
     origin_type = get_origin(type)
 
     if origin_type is Union or origin_type is UnionType:
-        return any(check(value, argument) for argument in get_args(type))
+        return any(check(value, argument, strict=strict) for argument in get_args(type))
+
+    elif origin_type is list and strict:
+        if not isinstance(value, list):
+            return False
+        return all(check(subvalue, get_args(type)[0], strict=strict) for subvalue in value)
 
     else:
         if origin_type is not None:
