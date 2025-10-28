@@ -469,9 +469,13 @@ def test_list_with_values_in_strict_mode(base_type):
     assert check([1, 2, 3], base_type[int], strict=True)
     assert check(['1', '2', '3'], base_type[str], strict=True)
 
+    assert check([1, 2, 3, 4, [1, 2, 3]], base_type[Union[int, base_type[int]]], strict=True)
+
     assert not check([1, 2, 3], base_type[str], strict=True)
     assert not check(['1', '2', 3], base_type[int], strict=True)
     assert not check(['1', '2', '3'], base_type[int], strict=True)
 
     assert not check((1, 2, 3), base_type[str], strict=True)
     assert not check("123", base_type[str], strict=True)
+
+    assert not check([1, 2, 3, 4, [1, 2, '3']], base_type[Union[int, base_type[int]]], strict=True)
