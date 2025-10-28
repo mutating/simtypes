@@ -465,3 +465,6 @@ def test_list_with_values_in_strict_mode():
     assert not check([1, 2, 3], List[str], strict=True)
     assert not check(['1', '2', 3], List[int], strict=True)
     assert not check(['1', '2', '3'], List[int], strict=True)
+
+    assert not check((1, 2, 3), List[str], strict=True)
+    assert not check("123", List[str], strict=True)
