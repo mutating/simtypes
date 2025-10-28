@@ -21,6 +21,7 @@ Python type checking tools are usually very complex. In this case, we have throw
 - [**Why?**](#why)
 - [**Installation**](#installation)
 - [**Usage**](#usage)
+- [**Special types**](#special-types)
 
 
 ## Why?
@@ -43,7 +44,7 @@ What exactly does this library support:
 And that's what's not here:
 
 - Supports types with complex semantics from the [`typing`](https://docs.python.org/3/library/typing.html) module.
-- Checking the contents of collections. Collections are checked only for the base type.
+- Checking the contents of collections. In normal mode, collections are checked only for the base type (in strict mode, the contents for some base collections are also checked).
 - Support for string annotations.
 
 If you need more complex semantics, use static validation tools. If you need strange and expensive runtime checks that try to confuse static semantics by adding thousands of exceptions, use other runtime tools. Use this library if you need a MINIMUM.
@@ -85,7 +86,7 @@ print(check([1], List))
 #> True
 print(check([1], List[int]))
 #> True
-print(check(['kek'], List[int]))  # Attention! The tool does not check the contents of the list in runtime.
+print(check(['kek'], List[int]))  # Attention! The content of the list is not checked in normal mode.
 #> True
 print(check(1, Optional[int]))
 #> True
@@ -100,3 +101,41 @@ print(check(None, None))
 ```
 
 > ↑ As you can see, the function returns `True` or `False`, depending on whether the value matches its annotation.
+
+In normal mode, the contents of collections are not checked. However, if strict mode is activated, the contents of lists and dictionaries will also start to be checked:
+
+```python
+print(check(['kek'], List[str]), strict=True)
+#> True
+print(check({'lol': 'kek'}, Dict[str, str]), strict=True)
+#> True
+print(check([1, 2, 3], List[str]), strict=True)
+#> False
+print(check({'lol': 123}, Dict[str, str]), strict=True)
+#> False
+```
+
+
+## Special types
+
+Some non-trivial runtime checks can be shifted to the type system. This library offers several additional types, which can be checked for membership via the check function:
+
+- `NaturalNumber` — as the name implies, only objects of type `int` greater than zero will be checked for this type.
+- `NonNegativeInt` — the same as `NaturalNumber`, but `0` is also a valid value.
+
+Here are some usage examples:
+
+```python
+from simtypes import NaturalNumber, NonNegativeInt
+
+print(check(13, NaturalNumber))
+#> True
+print(check(0, NaturalNumber))
+#> False
+print(check(13, NonNegativeInt))
+#> True
+print(check(0, NonNegativeInt))
+#> True
+print(check(-11, NonNegativeInt))
+#> False
+```
