@@ -513,3 +513,4 @@ def test_list_with_values_in_strict_mode(base_type):
     assert not check({1: 1}, base_type[str, int], strict=True)
     assert not check({123: {'lol': 123}}, base_type[int, base_type[str, str]], strict=True)
     assert not check({123: {123: 'kek'}}, base_type[int, base_type[str, str]], strict=True)
+    assert not check({123: ['lol', 1, 2, 3.0]}, base_type[int, List[Union[str, int]]], strict=True)
