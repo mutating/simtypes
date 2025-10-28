@@ -491,7 +491,7 @@ def test_list_with_values_in_strict_mode(base_type):
         (dict,),
     ],
 )
-def test_list_with_values_in_strict_mode(base_type):
+def test_dict_with_values_in_strict_mode(base_type):
     if sys.version_info < (3, 9) and base_type is dict:
         return
 
