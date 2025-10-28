@@ -468,3 +468,18 @@ def test_list_with_values_in_strict_mode():
 
     assert not check((1, 2, 3), List[str], strict=True)
     assert not check("123", List[str], strict=True)
+
+
+def test_new_style_list_with_values_in_strict_mode():
+    assert check([], list[int], strict=True)
+    assert check([], list[str], strict=True)
+
+    assert check([1, 2, 3], list[int], strict=True)
+    assert check(['1', '2', '3'], list[str], strict=True)
+
+    assert not check([1, 2, 3], list[str], strict=True)
+    assert not check(['1', '2', 3], list[int], strict=True)
+    assert not check(['1', '2', '3'], list[int], strict=True)
+
+    assert not check((1, 2, 3), list[str], strict=True)
+    assert not check("123", list[str], strict=True)
