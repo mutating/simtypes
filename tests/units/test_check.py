@@ -263,7 +263,7 @@ def test_optional_union():
     assert check('kek', Optional[make_hint(int, tuple)]) is False
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason='This operation became available in Python 3.9')
+@pytest.mark.skipif(sys.version_info < (3, 10), reason='This operation became available in Python 3.9')
 def test_optional_union_new_style():
     def make_hint(x, y):
         return x | y
