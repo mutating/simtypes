@@ -208,3 +208,5 @@ print(from_string('[1, 2, 3]', tuple[int, ...]))
 print(from_string('{"123": [1, 2, 3]}', dict[str, tuple[int, ...]]))
 #> {"123": [1, 2, 3]}
 ```
+
+> 👀 If the passed string cannot be interpreted as an object of the specified type, a `TypeError` exception will be raised.
