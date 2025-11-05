@@ -41,6 +41,13 @@ runner = "pytest"
 [tool.pytest.ini_options]
 markers = ["mypy_testing"]
 
+[tool.coverage.run]
+plugins = ["coverage_conditional_plugin"]
+
+[tool.coverage.coverage_conditional_plugin.rules]
+# Here we specify our pragma rules:
+py-gte-39 = "sys_version_info >= (3, 9)"
+
 [project.urls]
 'Source' = 'https://github.com/pomponchik/simtypes'
 'Tracker' = 'https://github.com/pomponchik/simtypes/issues'
