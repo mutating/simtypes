@@ -38,7 +38,7 @@ def check(value: Any, type: Type[ExpectedType], strict: bool = False, lists_are_
         return all(check(key, get_args(type)[0], strict=strict, lists_are_tuples=lists_are_tuples) and check(subvalue, get_args(type)[1], strict=strict, lists_are_tuples=lists_are_tuples) for key, subvalue in value.items())
 
     elif origin_type is tuple and strict:
-        types_to_check = [tuple] if not lists_are_tuples else [tuple, list]
+        types_to_check: Type[Union[tuple, list]] = [tuple] if not lists_are_tuples else [tuple, list]
         if all(not isinstance(value, x) for x in types_to_check):
             return False
 
