@@ -21,25 +21,25 @@ def from_string(value: str, expected_type: Type[ExpectedType]) -> ExpectedType:
         except JSONDecodeError as e:
             raise TypeError(error_message) from e
 
-        if not check(result, expected_type, strict=True, lists_are_tuples=True):
+        if not check(result, expected_type, strict=True, lists_are_tuples=True):  # type: ignore[operator]
             raise TypeError(error_message)
 
         return result
 
     elif expected_type is str:
-        return value
+        return value  # type: ignore[return-value]
 
     elif expected_type is bool:
         if value in ('True', 'true', 'yes'):
-            return True
+            return True  # type: ignore[return-value]
         elif value in ('False', 'false', 'no'):
-            return False
+            return False  # type: ignore[return-value]
         else:
             raise TypeError(f'The string "{value}" cannot be interpreted as a boolean value.')
 
     elif expected_type is int:
         try:
-            return int(value)
+            return int(value)  # type: ignore[return-value]
         except ValueError as e:
             raise TypeError(f'The string "{value}" cannot be interpreted as an integer.') from e
 
@@ -50,7 +50,7 @@ def from_string(value: str, expected_type: Type[ExpectedType]) -> ExpectedType:
             value = '-inf'
 
         try:
-            return float(value)
+            return float(value)  # type: ignore[return-value]
         except ValueError as e:
             raise TypeError(f'The string "{value}" cannot be interpreted as a floating point number.') from e
 
