@@ -236,14 +236,36 @@ def test_new_style_optional():
     assert check((1, 2, 3), tuple | None) is True
 
 
-@pytest.mark.parametrize(
-    ['make_hint'],
-    [
-        (lambda x, y: Union[x, y],),
-        (lambda x, y: x | y,),
-    ],
-)
-def test_optional_union(make_hint):
+def test_optional_union():
+    make_hint = lambda x, y: Union[x, y]
+
+    assert check(None, Optional[make_hint(int, str)]) is True
+    assert check(1, Optional[make_hint(int, str)]) is True
+    assert check('kek', Optional[make_hint(int, str)]) is True
+    assert check('', Optional[make_hint(int, str)]) is True
+    assert check(-1000, Optional[make_hint(int, str)]) is True
+    assert check(0, Optional[make_hint(int, str)]) is True
+    assert check((), Optional[make_hint(int, Tuple)]) is True
+    assert check((1, 2, 3), Optional[make_hint(int, Tuple)]) is True
+    assert check((), Optional[make_hint(int, tuple)]) is True
+    assert check((1, 2, 3), Optional[make_hint(int, tuple)]) is True
+
+    assert check(1.0, Optional[make_hint(int, str)]) is False
+    assert check([1.0], Optional[make_hint(int, str)]) is False
+    assert check([1], Optional[make_hint(int, str)]) is False
+    assert check(['kek'], Optional[make_hint(int, str)]) is False
+    assert check([None], Optional[make_hint(int, str)]) is False
+    assert check([[]], Optional[make_hint(int, str)]) is False
+    assert check([], Optional[make_hint(int, Tuple)]) is False
+    assert check([1, 2, 3], Optional[make_hint(int, Tuple)]) is False
+    assert check([5], Optional[make_hint(int, tuple)]) is False
+    assert check('kek', Optional[make_hint(int, tuple)]) is False
+
+
+@pytest.mark.skipif(sys.version_info < (3, 9), reason='This operation became available in Python 3.9')
+def test_optional_union_new_style():
+    make_hint = lambda x, y: x | y
+
     assert check(None, Optional[make_hint(int, str)]) is True
     assert check(1, Optional[make_hint(int, str)]) is True
     assert check('kek', Optional[make_hint(int, str)]) is True
