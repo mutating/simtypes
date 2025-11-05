@@ -1,4 +1,4 @@
-from typing import List, Type, get_args, get_origin
+from typing import Type, get_origin
 from json import loads, JSONDecodeError
 from inspect import isclass
 
