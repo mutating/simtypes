@@ -203,8 +203,7 @@ def test_get_list_value(base_list_type, base_dict_type):
     ],
 )
 def test_get_tuple_value(base_tuple_type, base_dict_type):
-    print(version_info < (3, 9), version_info)
-    if version_info < (3, 9) and (base_tuple_type is list or base_dict_type is dict):
+    if version_info < (3, 9) and (base_tuple_type is tuple or base_dict_type is dict):
         return
 
     assert from_string('[]', base_tuple_type) == []
