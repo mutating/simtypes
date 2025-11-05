@@ -63,6 +63,6 @@ def check(value: Any, type: Type[ExpectedType], strict: bool = False, lists_are_
             raise ValueError('Type must be a valid type object.')
 
         if type is tuple and lists_are_tuples:
-            return isinstance(value, tuple) or isinstance(value, list)  # pragma: py-gte-39
+            return isinstance(value, tuple) or isinstance(value, list)  # pragma: no cover
 
         return isinstance(value, type)
