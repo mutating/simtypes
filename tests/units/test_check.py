@@ -237,7 +237,8 @@ def test_new_style_optional():
 
 
 def test_optional_union():
-    make_hint = lambda x, y: Union[x, y]
+    def make_hint(x, y):
+        return Union[x, y]
 
     assert check(None, Optional[make_hint(int, str)]) is True
     assert check(1, Optional[make_hint(int, str)]) is True
@@ -264,7 +265,8 @@ def test_optional_union():
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason='This operation became available in Python 3.9')
 def test_optional_union_new_style():
-    make_hint = lambda x, y: x | y
+    def make_hint(x, y):
+        return x | y
 
     assert check(None, Optional[make_hint(int, str)]) is True
     assert check(1, Optional[make_hint(int, str)]) is True
