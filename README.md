@@ -22,6 +22,8 @@ Python type checking tools are usually very complex. In this case, we have throw
 - [**Installation**](#installation)
 - [**Usage**](#usage)
 - [**Special types**](#special-types)
+- [**String deserialization**](#string-deserialization)
+
 
 
 ## Why?
@@ -102,7 +104,7 @@ print(check(None, None))
 
 > ↑ As you can see, the function returns `True` or `False`, depending on whether the value matches its annotation.
 
-In normal mode, the contents of collections are not checked. However, if strict mode is activated, the contents of lists and dictionaries will also start to be checked:
+In normal mode, the contents of collections are not checked. However, if strict mode is activated, the contents of lists, dicts and tuples will also start to be checked:
 
 ```python
 print(check(['kek'], List[str]), strict=True)
@@ -112,6 +114,12 @@ print(check({'lol': 'kek'}, Dict[str, str]), strict=True)
 print(check([1, 2, 3], List[str]), strict=True)
 #> False
 print(check({'lol': 123}, Dict[str, str]), strict=True)
+#> False
+print(check((1, 2, 3), Tuple[int, int, int]), strict=True)
+#> True
+print(check((1, 2, 3), Tuple[int, ...]), strict=True)
+#> True
+print(check((1, 2, "text"), Tuple[int, ...]), strict=True)
 #> False
 ```
 
@@ -138,4 +146,40 @@ print(check(0, NonNegativeInt))
 #> True
 print(check(-11, NonNegativeInt))
 #> False
+```
+
+
+## String deserialization
+
+The library also provides primitive deserialization. Conversion of strings into several basic types in any combinations is supported:
+
+- `str`- any string can be interpreted as a `str` type.
+- `int` - any integers.
+- `float` - any floating-point numbers, including infinities and `NaN`.
+- `bool`- the strings `"yes"`, `"True"`, and `"true"` are interpreted as `True`, while `"no"`, `"False"`, or `"false"` are interpreted as `False`.
+- `list` - lists in [`json`](https://en.wikipedia.org/wiki/JSON) format are expected.
+- `tuple` - lists in [`json`](https://en.wikipedia.org/wiki/JSON) format are expected. This is the only type where the value produced does not match the passed type, the returned value is always a list.
+- `dict` - dicts in [`json`](https://en.wikipedia.org/wiki/JSON) format are expected.
+
+Examples:
+
+```python
+from simtypes import from_string
+
+print(from_string('13', int))
+#> 13
+print(from_string('13', str))
+#> "13"
+print(from_string('yes', bool))
+#> True
+print(from_string('no', bool))
+#> False
+print(from_string('True', bool))
+#> True
+print(from_string('[1, 2, 3]', list[int]))
+#> [1, 2, 3]
+print(from_string('[1, 2, 3]', tuple[int, ...]))
+#> [1, 2, 3]
+print(from_string('{"123": [1, 2, 3]}', dict[str, tuple[int, ...]]))
+#> {"123": [1, 2, 3]}
 ```

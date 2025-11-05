@@ -190,6 +190,14 @@ def test_optional():
     assert check([], Optional[List]) is True
     assert check([], Optional[list]) is True
 
+    assert check([], Optional[Tuple]) is False
+    assert check([], Optional[tuple]) is False
+
+    assert check((), Optional[Tuple]) is True
+    assert check((), Optional[tuple]) is True
+    assert check((1, 2, 3), Optional[Tuple]) is True
+    assert check((1, 2, 3), Optional[tuple]) is True
+
 
 @pytest.mark.skipif(sys.version_info < (3, 10), reason='Union type expressions appeared in Python 3.10')
 def test_new_style_optional():
@@ -219,152 +227,151 @@ def test_new_style_optional():
     assert check([], List | None) is True
     assert check([], list | None) is True
 
+    assert check([], Tuple | None) is False
+    assert check([], tuple | None) is False
 
-def test_optional_union():
-    assert check(None, Optional[Union[int, str]]) is True
-    assert check(1, Optional[Union[int, str]]) is True
-    assert check('kek', Optional[Union[int, str]]) is True
-    assert check('', Optional[Union[int, str]]) is True
-    assert check(-1000, Optional[Union[int, str]]) is True
-    assert check(0, Optional[Union[int, str]]) is True
-
-    assert check(1.0, Optional[Union[int, str]]) is False
-    assert check([1.0], Optional[Union[int, str]]) is False
-    assert check([1], Optional[Union[int, str]]) is False
-    assert check(['kek'], Optional[Union[int, str]]) is False
-    assert check([None], Optional[Union[int, str]]) is False
-    assert check([[]], Optional[Union[int, str]]) is False
+    assert check((), Tuple | None) is True
+    assert check((), tuple | None) is True
+    assert check((1, 2, 3), Tuple | None) is True
+    assert check((1, 2, 3), tuple | None) is True
 
 
-def test_list_without_arguments():
-    assert check([], list)
-    assert check([1, 2, 3], list)
-    assert check(['kek', 'lol'], list)
-    assert check([1, 'kek', 2.0], list)
+@pytest.mark.parametrize(
+    ['make_hint'],
+    [
+        (lambda x, y: Union[x, y],),
+        (lambda x, y: x | y,),
+    ],
+)
+def test_optional_union(make_hint):
+    assert check(None, Optional[make_hint(int, str)]) is True
+    assert check(1, Optional[make_hint(int, str)]) is True
+    assert check('kek', Optional[make_hint(int, str)]) is True
+    assert check('', Optional[make_hint(int, str)]) is True
+    assert check(-1000, Optional[make_hint(int, str)]) is True
+    assert check(0, Optional[make_hint(int, str)]) is True
+    assert check((), Optional[make_hint(int, Tuple)]) is True
+    assert check((1, 2, 3), Optional[make_hint(int, Tuple)]) is True
+    assert check((), Optional[make_hint(int, tuple)]) is True
+    assert check((1, 2, 3), Optional[make_hint(int, tuple)]) is True
 
-    assert check([], List)
-    assert check([1, 2, 3], List)
-    assert check(['kek', 'lol'], List)
-    assert check([1, 'kek', 2.0], List)
-
-    assert check((), list) == False
-    assert check((1, 2, 3), list) == False
-    assert check(('kek', 'lol'), list) == False
-    assert check((1, 'kek', 2.0), list) == False
-
-    assert check((), List) == False
-    assert check((1, 2, 3), List) == False
-    assert check(('kek', 'lol'), List) == False
-    assert check((1, 'kek', 2.0), List) == False
-
-    assert check(1, list) == False
-    assert check(1.0, list) == False
-    assert check('kek', list) == False
-    assert check(None, list) == False
-
-
-def test_tuple_without_arguments():
-    assert check((), tuple)
-    assert check((1,), tuple)
-    assert check((None,), tuple)
-    assert check(('kek',), tuple)
-    assert check((1, 2, 3), tuple)
-    assert check(('lol', 'kek'), tuple)
-
-    assert check((), Tuple)
-    assert check((1,), Tuple)
-    assert check((None,), Tuple)
-    assert check(('kek',), Tuple)
-    assert check((1, 2, 3), Tuple)
-    assert check(('lol', 'kek'), Tuple)
-
-    assert check([], tuple) == False
-    assert check([(1, 2, 3)], tuple) == False
-    assert check('(1, 2, 3)', tuple) == False
-    assert check('kek', tuple) == False
-    assert check(1, tuple) == False
-    assert check(1.0, tuple) == False
-    assert check(None, tuple) == False
-
-    assert check([], Tuple) == False
-    assert check([(1, 2, 3)], Tuple) == False
-    assert check('(1, 2, 3)', Tuple) == False
-    assert check('kek', Tuple) == False
-    assert check(1, Tuple) == False
-    assert check(1.0, Tuple) == False
-    assert check(None, Tuple) == False
+    assert check(1.0, Optional[make_hint(int, str)]) is False
+    assert check([1.0], Optional[make_hint(int, str)]) is False
+    assert check([1], Optional[make_hint(int, str)]) is False
+    assert check(['kek'], Optional[make_hint(int, str)]) is False
+    assert check([None], Optional[make_hint(int, str)]) is False
+    assert check([[]], Optional[make_hint(int, str)]) is False
+    assert check([], Optional[make_hint(int, Tuple)]) is False
+    assert check([1, 2, 3], Optional[make_hint(int, Tuple)]) is False
+    assert check([5], Optional[make_hint(int, tuple)]) is False
+    assert check('kek', Optional[make_hint(int, tuple)]) is False
 
 
-def test_set_without_arguments():
-    assert check(set(), set)
-    assert check({1}, set)
-    assert check({None}, set)
-    assert check({'kek'}, set)
-    assert check({1, 2, 3}, set)
-    assert check({'lol', 'kek'}, set)
+@pytest.mark.parametrize(
+    ['list_type'],
+    [
+        (List,),
+        (list,),
+    ],
+)
+def test_list_without_arguments(list_type):
+    assert check([], list_type)
+    assert check([1, 2, 3], list_type)
+    assert check(['kek', 'lol'], list_type)
+    assert check([1, 'kek', 2.0], list_type)
 
-    assert check(set(), Set)
-    assert check({1}, Set)
-    assert check({None}, Set)
-    assert check({'kek'}, Set)
-    assert check({1, 2, 3}, Set)
-    assert check({'lol', 'kek'}, Set)
+    assert not check((), list_type)
+    assert not check((1, 2, 3), list_type)
+    assert not check(('kek', 'lol'), list_type)
+    assert not check((1, 'kek', 2.0), list_type)
 
-    assert check([], set) == False
-    assert check([(1, 2, 3)], set) == False
-    assert check('(1, 2, 3)', set) == False
-    assert check('kek', set) == False
-    assert check(1, set) == False
-    assert check(1.0, set) == False
-    assert check(None, set) == False
-
-    assert check([], Set) == False
-    assert check([(1, 2, 3)], Set) == False
-    assert check('(1, 2, 3)', Set) == False
-    assert check('kek', Set) == False
-    assert check(1, Set) == False
-    assert check(1.0, Set) == False
-    assert check(None, Set) == False
+    assert not check(1, list_type)
+    assert not check(1.0, list_type)
+    assert not check('kek', list_type)
+    assert not check(None, list_type)
 
 
-def test_dict_without_arguments():
-    assert check({}, dict)
-    assert check({'lol': 'kek'}, dict)
-    assert check({1: 'kek'}, dict)
-    assert check({'lol': 1}, dict)
-    assert check({'lol': None}, dict)
-    assert check({1: None}, dict)
+@pytest.mark.parametrize(
+    ['tuple_type'],
+    [
+        (Tuple,),
+        (tuple,),
+    ],
+)
+def test_tuple_without_arguments(tuple_type):
+    assert check((), tuple_type)
+    assert check((1,), tuple_type)
+    assert check((None,), tuple_type)
+    assert check(('kek',), tuple_type)
+    assert check((('kek',),), tuple_type)
+    assert check((1, 2, 3), tuple_type)
+    assert check(('kek', 'lol'), tuple_type)
+    assert check((1, 'kek', 2.0), tuple_type)
 
-    assert check({}, Dict)
-    assert check({'lol': 'kek'}, Dict)
-    assert check({1: 'kek'}, Dict)
-    assert check({'lol': 1}, Dict)
-    assert check({'lol': None}, Dict)
-    assert check({1: None}, Dict)
+    assert not check([], tuple_type)
+    assert not check([1, 2, 3], tuple_type)
+    assert not check(['kek', 'lol'], tuple_type)
+    assert not check([1, 'kek', 2.0], tuple_type)
+    assert not check([(1, 2, 3)], tuple_type)
+    assert not check('(1, 2, 3)', tuple_type)
+    assert not check('kek', tuple_type)
+    assert not check(1, tuple_type)
+    assert not check(1.0, tuple_type)
+    assert not check(None, tuple_type)
 
-    assert check([], dict) == False
-    assert check(set([1, 2, 3]), dict) == False
-    assert check(None, dict) == False
-    assert check(1, dict) == False
-    assert check(1.0, dict) == False
-    assert check('{1: None}', dict) == False
-    assert check('kek', dict) == False
-    assert check(dict, dict) == False
-    assert check(Dict, dict) == False
 
-    assert check([], Dict) == False
-    assert check(set([1, 2, 3]), Dict) == False
-    assert check(None, Dict) == False
-    assert check(1, Dict) == False
-    assert check(1.0, Dict) == False
-    assert check('{1: None}', Dict) == False
-    assert check('kek', Dict) == False
-    assert check(dict, Dict) == False
-    assert check(Dict, Dict) == False
+@pytest.mark.parametrize(
+    ['set_type'],
+    [
+        (Set,),
+        (set,),
+    ],
+)
+def test_set_without_arguments(set_type):
+    assert check(set(), set_type)
+    assert check({1}, set_type)
+    assert check({None}, set_type)
+    assert check({'kek'}, set_type)
+    assert check({1, 2, 3}, set_type)
+    assert check({'lol', 'kek'}, set_type)
+
+    assert not check([], set_type)
+    assert not check([(1, 2, 3)], set_type)
+    assert not check('(1, 2, 3)', set_type)
+    assert not check('kek', set_type)
+    assert not check(1, set_type)
+    assert not check(1.0, set_type)
+    assert not check(None, set_type)
+
+
+@pytest.mark.parametrize(
+    ['dict_type'],
+    [
+        (Dict,),
+        (dict,),
+    ],
+)
+def test_dict_without_arguments(dict_type):
+    assert check({}, dict_type)
+    assert check({'lol': 'kek'}, dict_type)
+    assert check({1: 'kek'}, dict_type)
+    assert check({'lol': 1}, dict_type)
+    assert check({'lol': None}, dict_type)
+    assert check({1: None}, dict_type)
+
+    assert not check([], dict_type)
+    assert not check(set([1, 2, 3]), dict_type)
+    assert not check(None, dict_type)
+    assert not check(1, dict_type)
+    assert not check(1.0, dict_type)
+    assert not check('{1: None}', dict_type)
+    assert not check('kek', dict_type)
+    assert not check(dict, dict_type)
+    assert not check(Dict, dict_type)
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
-def test_content_of_list_is_not_checking():
+def test_content_of_list_not_in_strict_mode_is_not_checking():
     assert check([], list[int])
     assert check(['lol', 'kek'], list[int])
     assert check([1.0, 2.0], list[int])
@@ -379,7 +386,7 @@ def test_content_of_list_is_not_checking():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
-def test_content_of_tuple_is_not_checking():
+def test_content_of_tuple_not_in_strict_mode_is_not_checking():
     assert check((), tuple[int])
     assert check(('lol', 'kek'), tuple[int])
     assert check((1.0, 2.0), tuple[int])
@@ -394,7 +401,7 @@ def test_content_of_tuple_is_not_checking():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
-def test_content_of_dict_is_not_checking():
+def test_content_of_dict_not_in_strict_mode_is_not_checking():
     assert check({}, dict[int, int])
     assert check({1: 'kek'}, dict[int, int])
     assert check({'lol': 'kek'}, dict[int, int])
@@ -409,7 +416,7 @@ def test_content_of_dict_is_not_checking():
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
-def test_content_of_set_is_not_checking():
+def test_content_of_set_not_in_strict_mode_is_not_checking():
     assert check(set(), set[int])
     assert check(set(['lol', 'kek']), set[int])
     assert check(set([1, 'kek']), set[int])
@@ -429,7 +436,7 @@ def test_try_to_pass_not_type_object_as_type():
         check(1, 'SomeClass')
 
 
-def test_simle_isinstance():
+def test_simple_isinstance():
     class SomeType:
         pass
 
@@ -446,7 +453,7 @@ def test_sequence():
     assert check((1, 2, 3), Sequence)
     assert check('kek', Sequence)
 
-    assert check(1, Sequence) == False
+    assert not check(1, Sequence)
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
@@ -514,3 +521,83 @@ def test_dict_with_values_in_strict_mode(base_type):
     assert not check({123: {'lol': 123}}, base_type[int, base_type[str, str]], strict=True)
     assert not check({123: {123: 'kek'}}, base_type[int, base_type[str, str]], strict=True)
     assert not check({123: ['lol', 1, 2, 3.0]}, base_type[int, List[Union[str, int]]], strict=True)
+
+
+@pytest.mark.parametrize(
+    ['base_type'],
+    [
+        (Tuple,),
+        (tuple,),
+    ],
+)
+def test_tuple_with_values_in_strict_mode(base_type):
+    if sys.version_info < (3, 9) and base_type is tuple:
+        return
+
+    assert not check((), base_type[int], strict=True)
+    assert not check((), base_type[str], strict=True)
+    assert check((), base_type[int, ...], strict=True)
+    assert check((), base_type[str, ...], strict=True)
+
+    assert not check((1), base_type[int, int], strict=True)
+    assert not check(('kek'), base_type[str, str], strict=True)
+
+    assert check((1, 2, 3), base_type[int, ...], strict=True)
+    assert check(('1', '2', '3'), base_type[str, ...], strict=True)
+
+    assert check((1, 2, 3, 4, (1, 2, 3)), base_type[Union[int, base_type[int, ...]], ...], strict=True)
+
+    assert not check((1, 2, 3), base_type[str, ...], strict=True)
+    assert not check(('1', '2', 3), base_type[int, ...], strict=True)
+    assert not check(('1', '2', '3'), base_type[int, ...], strict=True)
+
+    assert not check((1, 2, 3), base_type[str, ...], strict=True)
+    assert not check([1, 2, 3], base_type[str, ...], strict=True)
+    assert not check(['1', '2', '3'], base_type[str, ...], strict=True)
+    assert not check("123", base_type[str, ...], strict=True)
+
+    assert not check((1, 2, 3, 4, (1, 2, '3')), base_type[Union[int, base_type[int]]], strict=True)
+
+
+@pytest.mark.parametrize(
+    ['tuple_type'],
+    [
+        (Tuple,),
+        (tuple,),
+    ],
+)
+@pytest.mark.parametrize(
+    ['list_type'],
+    [
+        (List,),
+        (list,),
+    ],
+)
+@pytest.mark.parametrize(
+    ['dict_type'],
+    [
+        (Dict,),
+        (dict,),
+    ],
+)
+def test_lists_are_tuples_flag_is_true_in_strict_mode(tuple_type, list_type, dict_type):
+    if sys.version_info < (3, 9) and (tuple_type is tuple or list_type is list or dict_type is dict):
+        return
+
+    assert check(["123"], list_type[str], strict=True, lists_are_tuples=True)
+    assert check(["123"], tuple_type[str, ...], strict=True, lists_are_tuples=True)
+    assert check(("123",), tuple_type[str, ...], strict=True, lists_are_tuples=True)
+
+    assert check([("123", "456"), ("123", "456")], tuple_type[tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
+    assert check([("123", "456"), ["123", "456"]], tuple_type[tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
+    assert check([["123", "456"], ["123", "456"]], tuple_type[tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
+    assert check((["123", "456"], ["123", "456"]), tuple_type[tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
+    assert check((("123", "456"), ("123", "456")), tuple_type[tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
+
+    assert check(["123"], Union[tuple_type[str, ...], int], strict=True, lists_are_tuples=True)
+    assert check([1, 2, 3], Union[tuple_type[str, ...], tuple_type[int, ...]], strict=True, lists_are_tuples=True)
+
+    assert check([[1, 2, 3], [4, 5, 6]], list_type[Union[tuple_type[str, ...], tuple_type[int, ...]]], strict=True, lists_are_tuples=True)
+    assert check([[1, 2, 3], [4, 5, 6]], tuple_type[tuple_type[int, ...], ...], strict=True, lists_are_tuples=True)
+    assert check(([1, 2, 3], [4, 5, 6]), tuple_type[Union[tuple_type[str, ...], tuple_type[int, ...]], ...], strict=True, lists_are_tuples=True)
+    assert check({1: [1, 2, 3], 2: [4, 5, 6]}, dict_type[int, Union[tuple_type[str, ...], tuple_type[int, ...]]], strict=True, lists_are_tuples=True)
