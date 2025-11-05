@@ -44,6 +44,11 @@ def from_string(value: str, expected_type: Type[ExpectedType]) -> ExpectedType:
             raise TypeError(f'The string "{value}" cannot be interpreted as an integer.') from e
 
     elif expected_type is float:
+        if value == '∞':
+            value = 'inf'
+        elif value == '-∞':
+            value = '-inf'
+
         try:
             return float(value)
         except ValueError as e:

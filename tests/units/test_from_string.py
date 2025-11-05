@@ -84,8 +84,14 @@ def test_get_float_value():
 
     assert from_string('inf', float) == inf
     assert from_string('-inf', float) == -inf
+    assert from_string('INF', float) == inf
+    assert from_string('-INF', float) == -inf
+    assert from_string('∞', float) == inf
+    assert from_string('-∞', float) == -inf
 
     assert isnan(from_string('nan', float))
+    assert isnan(from_string('NaN', float))
+    assert isnan(from_string('NAN', float))
 
     with pytest.raises(TypeError, match=match('The string "True" cannot be interpreted as a floating point number.')):
         from_string('True', float)

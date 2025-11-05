@@ -166,16 +166,41 @@ Examples:
 ```python
 from simtypes import from_string
 
+# ints
 print(from_string('13', int))
 #> 13
-print(from_string('13', str))
-#> "13"
+print(from_string('-13', int))
+#> -13
+
+# floats
+print(from_string('13', float))
+#> 13.0
+print(from_string('13.5', float))
+#> 13.5
+print(from_string('nan', float))
+#> nan
+print(from_string('∞', float))
+#> inf
+print(from_string('-∞', float))
+#> -inf
+print(from_string('inf', float))
+#> inf
+print(from_string('-inf', float))
+#> -inf
+
+# strings
+print(from_string('I am the danger', str))
+#> "I am the danger"
+
+# bools
 print(from_string('yes', bool))
 #> True
 print(from_string('no', bool))
 #> False
 print(from_string('True', bool))
 #> True
+
+# collections
 print(from_string('[1, 2, 3]', list[int]))
 #> [1, 2, 3]
 print(from_string('[1, 2, 3]', tuple[int, ...]))
