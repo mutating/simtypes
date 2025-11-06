@@ -166,7 +166,7 @@ def test_get_list_value(list_type, subscribable_dict_type, subscribable_list_typ
         from_string('[{"lol": "kek"}, {"lol": "kek"}]', subscribable_list_type[subscribable_dict_type[int, str]])
 
     with pytest.raises(TypeError, match=match('The string "[{"lol": "kek"}, {"lol": "kek"}]" cannot be interpreted as a list of the specified format.')):
-        from_string('[{"lol": "kek"}, {"lol": "kek"}]', subscribable_list_type[list_type[str]])
+        from_string('[{"lol": "kek"}, {"lol": "kek"}]', subscribable_list_type[subscribable_list_type[str]])
 
 
 def test_get_tuple_value(tuple_type, subscribable_dict_type):
