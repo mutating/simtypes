@@ -4,7 +4,7 @@
 [![Downloads](https://static.pepy.tech/badge/simtypes)](https://pepy.tech/project/simtypes)
 [![Coverage Status](https://coveralls.io/repos/github/pomponchik/simtypes/badge.svg?branch=main)](https://coveralls.io/github/pomponchik/simtypes?branch=main)
 [![Lines of code](https://sloc.xyz/github/pomponchik/simtypes/?category=code)](https://github.com/boyter/scc/)
-[![Hits-of-Code](https://hitsofcode.com/github/pomponchik/simtypes?branch=main)](https://hitsofcode.com/github/pomponchik/simtypes/view?branch=main)
+[![Hits-of-Code](https://hitsofcode.com/github/pomponchik/simtypes?branch=main&label=Hits-of-Code&exclude=docs/)](https://hitsofcode.com/github/pomponchik/simtypes/view?branch=main)
 [![Test-Package](https://github.com/pomponchik/simtypes/actions/workflows/tests_and_coverage.yml/badge.svg)](https://github.com/pomponchik/simtypes/actions/workflows/tests_and_coverage.yml)
 [![Python versions](https://img.shields.io/pypi/pyversions/simtypes.svg)](https://pypi.python.org/pypi/simtypes)
 [![PyPI version](https://badge.fury.io/py/simtypes.svg)](https://badge.fury.io/py/simtypes)
