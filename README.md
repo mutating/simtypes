@@ -191,6 +191,8 @@ print(from_string('-inf', float))
 # strings
 print(from_string('I am the danger', str))
 #> "I am the danger"
+print(from_string('I am the danger', Any))  # Any is interpreted as a string.
+#> "I am the danger"
 
 # bools
 print(from_string('yes', bool))
