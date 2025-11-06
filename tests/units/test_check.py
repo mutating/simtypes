@@ -92,49 +92,26 @@ def test_union(make_union):
     assert not check(None, make_union(int, str))
 
 
-def test_union_recursive():
-    assert check(1, Union[int, Union[float, str]]) is True
-    assert check(1.0, Union[int, Union[float, str]]) is True
-    assert check('kek', Union[int, Union[float, str]]) is True
+def test_union_recursive(make_union):
+    assert check(1, make_union(int, make_union(float, str)))
+    assert check(1.0, make_union(int, make_union(float, str)))
+    assert check('kek', make_union(int, make_union(float, str)))
 
-    assert check(1, Union[Union[float, str], int]) is True
-    assert check(1.0, Union[Union[float, str], int]) is True
-    assert check('kek', Union[Union[float, str], int]) is True
+    assert check(1, make_union(make_union(float, str), int))
+    assert check(1.0, make_union(make_union(float, str), int))
+    assert check('kek', make_union(make_union(float, str), int))
 
-    assert check(None, Union[int, Union[float, str]]) is False
-    assert check([1, 2, 3], Union[int, Union[float, str]]) is False
-    assert check(['kek'], Union[int, Union[float, str]]) is False
-    assert check(('kek',), Union[int, Union[float, str]]) is False
-    assert check(set(), Union[int, Union[float, str]]) is False
+    assert not check(None, make_union(int, make_union(float, str)))
+    assert not check([1, 2, 3], make_union(int, make_union(float, str)))
+    assert not check(['kek'], make_union(int, make_union(float, str)))
+    assert not check(('kek',), make_union(int, make_union(float, str)))
+    assert not check(set(), make_union(int, make_union(float, str)))
 
-    assert check(None, Union[Union[float, str], int]) is False
-    assert check([1, 2, 3], Union[Union[float, str], int]) is False
-    assert check(['kek'], Union[Union[float, str], int]) is False
-    assert check(('kek',), Union[Union[float, str], int]) is False
-    assert check(set(), Union[Union[float, str], int]) is False
-
-
-@pytest.mark.skipif(sys.version_info < (3, 10), reason='Union type expressions appeared in Python 3.10')
-def test_new_style_union_is_recursive():
-    assert check(1, int | float | str)
-    assert check(1.0, int | float | str)
-    assert check('kek', int | float | str)
-
-    assert check(1, int | float | str)
-    assert check(1.0, int | float | str)
-    assert check('kek', int | float | str)
-
-    assert not check(None, int | float | str)
-    assert not check([1, 2, 3], int | float | str)
-    assert not check(['kek'], int | float | str)
-    assert not check(('kek',), int | float | str)
-    assert not check(set(), int | float | str)
-
-    assert not check(None, int | float | str)
-    assert not check([1, 2, 3], int | float | str)
-    assert not check(['kek'], int | float | str)
-    assert not check(('kek',), int | float | str)
-    assert not check(set(), int | float | str)
+    assert not check(None, make_union(make_union(float, str), int))
+    assert not check([1, 2, 3], make_union(make_union(float, str), int))
+    assert not check(['kek'], make_union(make_union(float, str), int))
+    assert not check(('kek',), make_union(make_union(float, str), int))
+    assert not check(set(), make_union(make_union(float, str), int))
 
 
 def test_bool_is_int(make_optional, make_union):
