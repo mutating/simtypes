@@ -159,7 +159,7 @@ def test_bool_is_int():
     assert check(False, Optional[Union[int, str]]) is True
 
 
-def test_optional(new_style):
+def test_optional(new_style, tuple_type, list_type):
     if sys.version_info < (3, 10) and new_style:
         return
 
@@ -191,40 +191,32 @@ def test_optional(new_style):
     assert not check(1, make_hint(str))
     assert not check(['kek'], make_hint(str))
 
-    assert check([], make_hint(List))
-    assert check([], make_hint(list))
-
-    assert not check([], make_hint(Tuple))
-    assert not check([], make_hint(tuple))
-
-    assert check((), make_hint(Tuple))
-    assert check((), make_hint(tuple))
-    assert check((1, 2, 3), make_hint(Tuple))
-    assert check((1, 2, 3), make_hint(tuple))
+    assert check([], make_hint(list_type))
+    assert not check([], make_hint(tuple_type))
+    assert check((), make_hint(tuple_type))
+    assert check((1, 2, 3), make_hint(tuple_type))
 
 
-def test_optional_union(make_union):
-    assert check(None, Optional[make_union(int, str)]) is True
-    assert check(1, Optional[make_union(int, str)]) is True
-    assert check('kek', Optional[make_union(int, str)]) is True
-    assert check('', Optional[make_union(int, str)]) is True
-    assert check(-1000, Optional[make_union(int, str)]) is True
-    assert check(0, Optional[make_union(int, str)]) is True
-    assert check((), Optional[make_union(int, Tuple)]) is True
-    assert check((1, 2, 3), Optional[make_union(int, Tuple)]) is True
-    assert check((), Optional[make_union(int, tuple)]) is True
-    assert check((1, 2, 3), Optional[make_union(int, tuple)]) is True
+def test_optional_union(make_union, tuple_type):
+    assert check(None, Optional[make_union(int, str)])
+    assert check(1, Optional[make_union(int, str)])
+    assert check('kek', Optional[make_union(int, str)])
+    assert check('', Optional[make_union(int, str)])
+    assert check(-1000, Optional[make_union(int, str)])
+    assert check(0, Optional[make_union(int, str)])
+    assert check((), Optional[make_union(int, tuple_type)])
+    assert check((1, 2, 3), Optional[make_union(int, tuple_type)])
 
-    assert check(1.0, Optional[make_union(int, str)]) is False
-    assert check([1.0], Optional[make_union(int, str)]) is False
-    assert check([1], Optional[make_union(int, str)]) is False
-    assert check(['kek'], Optional[make_union(int, str)]) is False
-    assert check([None], Optional[make_union(int, str)]) is False
-    assert check([[]], Optional[make_union(int, str)]) is False
-    assert check([], Optional[make_union(int, Tuple)]) is False
-    assert check([1, 2, 3], Optional[make_union(int, Tuple)]) is False
-    assert check([5], Optional[make_union(int, tuple)]) is False
-    assert check('kek', Optional[make_union(int, tuple)]) is False
+    assert not check(1.0, Optional[make_union(int, str)])
+    assert not check([1.0], Optional[make_union(int, str)])
+    assert not check([1], Optional[make_union(int, str)])
+    assert not check(['kek'], Optional[make_union(int, str)])
+    assert not check([None], Optional[make_union(int, str)])
+    assert not check([[]], Optional[make_union(int, str)])
+    assert not check([], Optional[make_union(int, tuple_type)])
+    assert not check([1, 2, 3], Optional[make_union(int, tuple_type)])
+    assert not check([5], Optional[make_union(int, tuple_type)])
+    assert not check('kek', Optional[make_union(int, tuple_type)])
 
 
 @pytest.mark.parametrize(
