@@ -85,6 +85,7 @@ def test_get_float_value():
     assert from_string('INF', float) == inf
     assert from_string('-INF', float) == -inf
     assert from_string('∞', float) == inf
+    assert from_string('+∞', float) == inf
     assert from_string('-∞', float) == -inf
 
     assert isnan(from_string('nan', float))
