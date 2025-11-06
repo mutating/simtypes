@@ -229,9 +229,6 @@ def test_get_tuple_value(tuple_type, subscribable_dict_type):
 
 
 def test_get_dict_value(dict_type, subscribable_list_type, subscribable_dict_type):
-    if version_info < (3, 9) and (dict_type is dict):
-        return
-
     assert from_string('{}', dict_type) == {}
     assert from_string('{}', subscribable_dict_type[int, int]) == {}
     assert from_string('{}', subscribable_dict_type[str, str]) == {}
