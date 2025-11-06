@@ -298,21 +298,29 @@ def test_optional_union_new_style():
         (list,),
     ],
 )
-def test_list_without_arguments(list_type):
-    assert check([], list_type)
-    assert check([1, 2, 3], list_type)
-    assert check(['kek', 'lol'], list_type)
-    assert check([1, 'kek', 2.0], list_type)
+@pytest.mark.parametrize(
+    ['addictional_parameters'],
+    [
+        ({},),
+        ({'strict': True},),
+        ({'strict': False},),
+    ],
+)
+def test_list_without_arguments(list_type, addictional_parameters):
+    assert check([], list_type, **addictional_parameters)
+    assert check([1, 2, 3], list_type, **addictional_parameters)
+    assert check(['kek', 'lol'], list_type, **addictional_parameters)
+    assert check([1, 'kek', 2.0], list_type, **addictional_parameters)
 
-    assert not check((), list_type)
-    assert not check((1, 2, 3), list_type)
-    assert not check(('kek', 'lol'), list_type)
-    assert not check((1, 'kek', 2.0), list_type)
+    assert not check((), list_type, **addictional_parameters)
+    assert not check((1, 2, 3), list_type, **addictional_parameters)
+    assert not check(('kek', 'lol'), list_type, **addictional_parameters)
+    assert not check((1, 'kek', 2.0), list_type, **addictional_parameters)
 
-    assert not check(1, list_type)
-    assert not check(1.0, list_type)
-    assert not check('kek', list_type)
-    assert not check(None, list_type)
+    assert not check(1, list_type, **addictional_parameters)
+    assert not check(1.0, list_type, **addictional_parameters)
+    assert not check('kek', list_type, **addictional_parameters)
+    assert not check(None, list_type, **addictional_parameters)
 
 
 @pytest.mark.parametrize(
@@ -322,26 +330,34 @@ def test_list_without_arguments(list_type):
         (tuple,),
     ],
 )
-def test_tuple_without_arguments(tuple_type):
-    assert check((), tuple_type)
-    assert check((1,), tuple_type)
-    assert check((None,), tuple_type)
-    assert check(('kek',), tuple_type)
-    assert check((('kek',),), tuple_type)
-    assert check((1, 2, 3), tuple_type)
-    assert check(('kek', 'lol'), tuple_type)
-    assert check((1, 'kek', 2.0), tuple_type)
+@pytest.mark.parametrize(
+    ['addictional_parameters'],
+    [
+        ({},),
+        ({'strict': True},),
+        ({'strict': False},),
+    ],
+)
+def test_tuple_without_arguments(tuple_type, addictional_parameters):
+    assert check((), tuple_type, **addictional_parameters)
+    assert check((1,), tuple_type, **addictional_parameters)
+    assert check((None,), tuple_type, **addictional_parameters)
+    assert check(('kek',), tuple_type, **addictional_parameters)
+    assert check((('kek',),), tuple_type, **addictional_parameters)
+    assert check((1, 2, 3), tuple_type, **addictional_parameters)
+    assert check(('kek', 'lol'), tuple_type, **addictional_parameters)
+    assert check((1, 'kek', 2.0), tuple_type, **addictional_parameters)
 
-    assert not check([], tuple_type)
-    assert not check([1, 2, 3], tuple_type)
-    assert not check(['kek', 'lol'], tuple_type)
-    assert not check([1, 'kek', 2.0], tuple_type)
-    assert not check([(1, 2, 3)], tuple_type)
-    assert not check('(1, 2, 3)', tuple_type)
-    assert not check('kek', tuple_type)
-    assert not check(1, tuple_type)
-    assert not check(1.0, tuple_type)
-    assert not check(None, tuple_type)
+    assert not check([], tuple_type, **addictional_parameters)
+    assert not check([1, 2, 3], tuple_type, **addictional_parameters)
+    assert not check(['kek', 'lol'], tuple_type, **addictional_parameters)
+    assert not check([1, 'kek', 2.0], tuple_type, **addictional_parameters)
+    assert not check([(1, 2, 3)], tuple_type, **addictional_parameters)
+    assert not check('(1, 2, 3)', tuple_type, **addictional_parameters)
+    assert not check('kek', tuple_type, **addictional_parameters)
+    assert not check(1, tuple_type, **addictional_parameters)
+    assert not check(1.0, tuple_type, **addictional_parameters)
+    assert not check(None, tuple_type, **addictional_parameters)
 
 
 @pytest.mark.parametrize(
@@ -351,21 +367,29 @@ def test_tuple_without_arguments(tuple_type):
         (set,),
     ],
 )
-def test_set_without_arguments(set_type):
-    assert check(set(), set_type)
-    assert check({1}, set_type)
-    assert check({None}, set_type)
-    assert check({'kek'}, set_type)
-    assert check({1, 2, 3}, set_type)
-    assert check({'lol', 'kek'}, set_type)
+@pytest.mark.parametrize(
+    ['addictional_parameters'],
+    [
+        ({},),
+        ({'strict': True},),
+        ({'strict': False},),
+    ],
+)
+def test_set_without_arguments(set_type, addictional_parameters):
+    assert check(set(), set_type, **addictional_parameters)
+    assert check({1}, set_type, **addictional_parameters)
+    assert check({None}, set_type, **addictional_parameters)
+    assert check({'kek'}, set_type, **addictional_parameters)
+    assert check({1, 2, 3}, set_type, **addictional_parameters)
+    assert check({'lol', 'kek'}, set_type, **addictional_parameters)
 
-    assert not check([], set_type)
-    assert not check([(1, 2, 3)], set_type)
-    assert not check('(1, 2, 3)', set_type)
-    assert not check('kek', set_type)
-    assert not check(1, set_type)
-    assert not check(1.0, set_type)
-    assert not check(None, set_type)
+    assert not check([], set_type, **addictional_parameters)
+    assert not check([(1, 2, 3)], set_type, **addictional_parameters)
+    assert not check('(1, 2, 3)', set_type, **addictional_parameters)
+    assert not check('kek', set_type, **addictional_parameters)
+    assert not check(1, set_type, **addictional_parameters)
+    assert not check(1.0, set_type, **addictional_parameters)
+    assert not check(None, set_type, **addictional_parameters)
 
 
 @pytest.mark.parametrize(
@@ -375,23 +399,31 @@ def test_set_without_arguments(set_type):
         (dict,),
     ],
 )
-def test_dict_without_arguments(dict_type):
-    assert check({}, dict_type)
-    assert check({'lol': 'kek'}, dict_type)
-    assert check({1: 'kek'}, dict_type)
-    assert check({'lol': 1}, dict_type)
-    assert check({'lol': None}, dict_type)
-    assert check({1: None}, dict_type)
+@pytest.mark.parametrize(
+    ['addictional_parameters'],
+    [
+        ({},),
+        ({'strict': True},),
+        ({'strict': False},),
+    ],
+)
+def test_dict_without_arguments(dict_type, addictional_parameters):
+    assert check({}, dict_type, **addictional_parameters)
+    assert check({'lol': 'kek'}, dict_type, **addictional_parameters)
+    assert check({1: 'kek'}, dict_type, **addictional_parameters)
+    assert check({'lol': 1}, dict_type, **addictional_parameters)
+    assert check({'lol': None}, dict_type, **addictional_parameters)
+    assert check({1: None}, dict_type, **addictional_parameters)
 
     assert not check([], dict_type)
-    assert not check(set([1, 2, 3]), dict_type)
-    assert not check(None, dict_type)
-    assert not check(1, dict_type)
-    assert not check(1.0, dict_type)
-    assert not check('{1: None}', dict_type)
-    assert not check('kek', dict_type)
-    assert not check(dict, dict_type)
-    assert not check(Dict, dict_type)
+    assert not check(set([1, 2, 3]), dict_type, **addictional_parameters)
+    assert not check(None, dict_type, **addictional_parameters)
+    assert not check(1, dict_type, **addictional_parameters)
+    assert not check(1.0, dict_type, **addictional_parameters)
+    assert not check('{1: None}', dict_type, **addictional_parameters)
+    assert not check('kek', dict_type, **addictional_parameters)
+    assert not check(dict, dict_type, **addictional_parameters)
+    assert not check(Dict, dict_type, **addictional_parameters)
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')

@@ -30,12 +30,18 @@ def check(value: Any, type: Type[ExpectedType], strict: bool = False, lists_are_
     elif origin_type is list and strict:
         if not isinstance(value, list):
             return False
-        return all(check(subvalue, get_args(type)[0], strict=strict, lists_are_tuples=lists_are_tuples) for subvalue in value)
+        arguments = get_args(type)
+        if not arguments:
+            return True
+        return all(check(subvalue, arguments[0], strict=strict, lists_are_tuples=lists_are_tuples) for subvalue in value)
 
     elif origin_type is dict and strict:
         if not isinstance(value, dict):
             return False
-        return all(check(key, get_args(type)[0], strict=strict, lists_are_tuples=lists_are_tuples) and check(subvalue, get_args(type)[1], strict=strict, lists_are_tuples=lists_are_tuples) for key, subvalue in value.items())
+        arguments = get_args(type)
+        if not arguments:
+            return True
+        return all(check(key, arguments[0], strict=strict, lists_are_tuples=lists_are_tuples) and check(subvalue, arguments[1], strict=strict, lists_are_tuples=lists_are_tuples) for key, subvalue in value.items())
 
     elif origin_type is tuple and strict:
         types_to_check: List[Union[Type[list], Type[tuple]]] = [tuple] if not lists_are_tuples else [tuple, list]
@@ -48,7 +54,7 @@ def check(value: Any, type: Type[ExpectedType], strict: bool = False, lists_are_
             return True
 
         if len(arguments) == 2 and arguments[1] is Ellipsis:
-            return all(check(subvalue, get_args(type)[0], strict=strict, lists_are_tuples=lists_are_tuples) for subvalue in value)
+            return all(check(subvalue, arguments[0], strict=strict, lists_are_tuples=lists_are_tuples) for subvalue in value)
 
         if len(arguments) != len(value):
             return False
