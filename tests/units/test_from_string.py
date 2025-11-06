@@ -1,4 +1,5 @@
 from math import inf, isnan
+from typing import Any
 
 import pytest
 from full_match import match
@@ -287,3 +288,15 @@ def test_get_dict_value(dict_type, subscribable_list_type, subscribable_dict_typ
 
     with pytest.raises(TypeError, match=match('The string "{"lol": {"kek": "kek"}}" cannot be interpreted as a dict of the specified format.')):
         from_string('{"lol": {"kek": "kek"}}', subscribable_dict_type[str, subscribable_dict_type[int, str]])
+
+
+@pytest.mark.parametrize(
+    ['string'],
+    [
+        ('{"lol": "kek"}',),
+        ('1',),
+        ('kek',),
+    ],
+)
+def test_get_any(string):
+    from_string(string, Any) == string
