@@ -11,7 +11,7 @@ def from_string(value: str, expected_type: Type[ExpectedType]) -> ExpectedType:
         raise ValueError(f'You can only pass a string as a string. You passed {type(value).__name__}.')
 
     if expected_type is Any:
-        return value
+        return value  # type: ignore[return-value]
 
     origin_type = get_origin(expected_type)
 
