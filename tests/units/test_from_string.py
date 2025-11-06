@@ -1,5 +1,4 @@
 from math import inf, isnan
-from sys import version_info
 
 import pytest
 from full_match import match

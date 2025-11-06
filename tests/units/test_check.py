@@ -5,7 +5,7 @@ try:
 except ImportError:
     NoneType = type(None)  # type: ignore[misc]
 
-from typing import Tuple, Optional, Any, Union
+from typing import Optional, Any, Union
 from collections.abc import Sequence
 
 import pytest
