@@ -31,38 +31,38 @@ def test_none():
 
 
 def test_built_in_types():
-    assert check(True, bool) is True
-    assert check(1, int) is True
-    assert check(1.0, float) is True
-    assert check('hello', str) is True
+    assert check(True, bool)
+    assert check(1, int)
+    assert check(1.0, float)
+    assert check('hello', str)
 
-    assert check(1, bool) is False
-    assert check('True', bool) is False
-    assert check(1.0, bool) is False
-    assert check(None, bool) is False
-    assert check('1', int) is False
-    assert check(1.0, int) is False
-    assert check(None, int) is False
-    assert check(1, str) is False
-    assert check(None, str) is False
-    assert check('1.0', float) is False
-    assert check(1, float) is False
-    assert check(None, float) is False
+    assert not check(1, bool)
+    assert not check('True', bool)
+    assert not check(1.0, bool)
+    assert not check(None, bool)
+    assert not check('1', int)
+    assert not check(1.0, int)
+    assert not check(None, int)
+    assert not check(1, str)
+    assert not check(None, str)
+    assert not check('1.0', float)
+    assert not check(1, float)
+    assert not check(None, float)
 
 
 def test_any():
-    assert check(True, Any) is True
-    assert check(False, Any) is True
-    assert check(0, Any) is True
-    assert check('kek', Any) is True
-    assert check(1.0, Any) is True
-    assert check([1, 2, 3], Any) is True
-    assert check((1, 2, 3), Any) is True
-    assert check([True], Any) is True
-    assert check('True', Any) is True
-    assert check(None, Any) is True
-    assert check(str, Any) is True
-    assert check(-1000, Any) is True
+    assert check(True, Any)
+    assert check(False, Any)
+    assert check(0, Any)
+    assert check('kek', Any)
+    assert check(1.0, Any)
+    assert check([1, 2, 3], Any)
+    assert check((1, 2, 3), Any)
+    assert check([True], Any)
+    assert check('True', Any)
+    assert check(None, Any)
+    assert check(str, Any)
+    assert check(-1000, Any)
 
 
 @pytest.mark.skipif(sys.version_info > (3, 13), reason="Before Python 3.14, you couldn't just use Union as an annotation.")
@@ -73,9 +73,9 @@ def test_empty_union_old_pythons():
 
 @pytest.mark.skipif(sys.version_info < (3, 14), reason="Before Python 3.14, you couldn't just use Union as an annotation.")
 def test_empty_union():
-    assert check(None, Union) == False
-    assert check(1, Union) == False
-    assert check('kek', Union) == False
+    assert not check(None, Union)
+    assert not check(1, Union)
+    assert not check('kek', Union)
 
 
 def test_empty_optional():
@@ -83,23 +83,19 @@ def test_empty_optional():
         check(None, Optional)
 
 
-def test_union():
-    assert check(1, Union[int, str]) is True
-    assert check('hello', Union[int, str]) is True
-    assert check(1.0, Union[int, float]) is True
+def test_union(new_style):
+    if new_style and sys.version_info < (3, 10):
+        return
 
-    assert check(1.0, Union[int, str]) is False
-    assert check(None, Union[int, str]) is False
+    def make_hint(first, second):
+        return first | second if new_style else Union[first, second]  # Union type expressions appeared in Python 3.10
 
+    assert check(1, make_hint(int, str))
+    assert check('hello', make_hint(int, str))
+    assert check(1.0, make_hint(int, float))
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason='Union type expressions appeared in Python 3.10')
-def test_union_new_style():
-    assert check(1, int | str) is True
-    assert check('hello', int | str) is True
-    assert check(1.0, int | float) is True
-
-    assert check(1.0, int | str) is False
-    assert check(None, int | str) is False
+    assert not check(1.0, make_hint(int, str))
+    assert not check(None, make_hint(int, str))
 
 
 def test_union_recursive():
@@ -163,141 +159,74 @@ def test_bool_is_int():
     assert check(False, Optional[Union[int, str]]) is True
 
 
-def test_optional():
-    assert check(None, Optional[int]) is True
-    assert check(1, Optional[int]) is True
-    assert check(0, Optional[int]) is True
-    assert check(-1000, Optional[int]) is True
+def test_optional(new_style):
+    if sys.version_info < (3, 10) and new_style:
+        return
 
-    assert check(1.0, Optional[int]) is False
-    assert check('1.0', Optional[int]) is False
-    assert check('kek', Optional[int]) is False
-    assert check('None', Optional[int]) is False
-    assert check([1, 2, 3], Optional[int]) is False
-    assert check(('kek',), Optional[int]) is False
-    assert check((1, 2, 3), Optional[int]) is False
-    assert check(set(), Optional[int]) is False
+    def make_hint(other_hint):
+        if new_style:
+            return other_hint | None  # Union type expressions appeared in Python 3.10
+        return Optional[other_hint]
 
-    assert check(None, Optional[str]) is True
-    assert check('1', Optional[str]) is True
-    assert check('kek', Optional[str]) is True
-    assert check('', Optional[str]) is True
+    assert check(None, make_hint(int))
+    assert check(1, make_hint(int))
+    assert check(0, make_hint(int))
+    assert check(-1000, make_hint(int))
 
-    assert check(1.0, Optional[str]) is False
-    assert check(1, Optional[str]) is False
-    assert check(['kek'], Optional[str]) is False
+    assert not check(1.0, make_hint(int))
+    assert not check('1.0', make_hint(int))
+    assert not check('kek', make_hint(int))
+    assert not check('None', make_hint(int))
+    assert not check([1, 2, 3], make_hint(int))
+    assert not check(('kek',), make_hint(int))
+    assert not check((1, 2, 3), make_hint(int))
+    assert not check(set(), make_hint(int))
 
-    assert check([], Optional[List]) is True
-    assert check([], Optional[list]) is True
+    assert check(None, make_hint(str))
+    assert check('1', make_hint(str))
+    assert check('kek', make_hint(str))
+    assert check('', make_hint(str))
 
-    assert check([], Optional[Tuple]) is False
-    assert check([], Optional[tuple]) is False
+    assert not check(1.0, make_hint(str))
+    assert not check(1, make_hint(str))
+    assert not check(['kek'], make_hint(str))
 
-    assert check((), Optional[Tuple]) is True
-    assert check((), Optional[tuple]) is True
-    assert check((1, 2, 3), Optional[Tuple]) is True
-    assert check((1, 2, 3), Optional[tuple]) is True
+    assert check([], make_hint(List))
+    assert check([], make_hint(list))
 
+    assert not check([], make_hint(Tuple))
+    assert not check([], make_hint(tuple))
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason='Union type expressions appeared in Python 3.10')
-def test_new_style_optional():
-    assert check(None, int | None) is True
-    assert check(1, int | None) is True
-    assert check(0, int | None) is True
-    assert check(-1000, int | None) is True
-
-    assert check(1.0, int | None) is False
-    assert check('1.0', int | None) is False
-    assert check('kek', int | None) is False
-    assert check('None', int | None) is False
-    assert check([1, 2, 3], int | None) is False
-    assert check(('kek',), int | None) is False
-    assert check((1, 2, 3), int | None) is False
-    assert check(set(), int | None) is False
-
-    assert check(None, str | None) is True
-    assert check('1', str | None) is True
-    assert check('kek', str | None) is True
-    assert check('', str | None) is True
-
-    assert check(1.0, str | None) is False
-    assert check(1, str | None) is False
-    assert check(['kek'], str | None) is False
-
-    assert check([], List | None) is True
-    assert check([], list | None) is True
-
-    assert check([], Tuple | None) is False
-    assert check([], tuple | None) is False
-
-    assert check((), Tuple | None) is True
-    assert check((), tuple | None) is True
-    assert check((1, 2, 3), Tuple | None) is True
-    assert check((1, 2, 3), tuple | None) is True
+    assert check((), make_hint(Tuple))
+    assert check((), make_hint(tuple))
+    assert check((1, 2, 3), make_hint(Tuple))
+    assert check((1, 2, 3), make_hint(tuple))
 
 
-def test_optional_union():
-    def make_hint(x, y):
-        return Union[x, y]
+def test_optional_union(make_union):
+    assert check(None, Optional[make_union(int, str)]) is True
+    assert check(1, Optional[make_union(int, str)]) is True
+    assert check('kek', Optional[make_union(int, str)]) is True
+    assert check('', Optional[make_union(int, str)]) is True
+    assert check(-1000, Optional[make_union(int, str)]) is True
+    assert check(0, Optional[make_union(int, str)]) is True
+    assert check((), Optional[make_union(int, Tuple)]) is True
+    assert check((1, 2, 3), Optional[make_union(int, Tuple)]) is True
+    assert check((), Optional[make_union(int, tuple)]) is True
+    assert check((1, 2, 3), Optional[make_union(int, tuple)]) is True
 
-    assert check(None, Optional[make_hint(int, str)]) is True
-    assert check(1, Optional[make_hint(int, str)]) is True
-    assert check('kek', Optional[make_hint(int, str)]) is True
-    assert check('', Optional[make_hint(int, str)]) is True
-    assert check(-1000, Optional[make_hint(int, str)]) is True
-    assert check(0, Optional[make_hint(int, str)]) is True
-    assert check((), Optional[make_hint(int, Tuple)]) is True
-    assert check((1, 2, 3), Optional[make_hint(int, Tuple)]) is True
-    assert check((), Optional[make_hint(int, tuple)]) is True
-    assert check((1, 2, 3), Optional[make_hint(int, tuple)]) is True
-
-    assert check(1.0, Optional[make_hint(int, str)]) is False
-    assert check([1.0], Optional[make_hint(int, str)]) is False
-    assert check([1], Optional[make_hint(int, str)]) is False
-    assert check(['kek'], Optional[make_hint(int, str)]) is False
-    assert check([None], Optional[make_hint(int, str)]) is False
-    assert check([[]], Optional[make_hint(int, str)]) is False
-    assert check([], Optional[make_hint(int, Tuple)]) is False
-    assert check([1, 2, 3], Optional[make_hint(int, Tuple)]) is False
-    assert check([5], Optional[make_hint(int, tuple)]) is False
-    assert check('kek', Optional[make_hint(int, tuple)]) is False
+    assert check(1.0, Optional[make_union(int, str)]) is False
+    assert check([1.0], Optional[make_union(int, str)]) is False
+    assert check([1], Optional[make_union(int, str)]) is False
+    assert check(['kek'], Optional[make_union(int, str)]) is False
+    assert check([None], Optional[make_union(int, str)]) is False
+    assert check([[]], Optional[make_union(int, str)]) is False
+    assert check([], Optional[make_union(int, Tuple)]) is False
+    assert check([1, 2, 3], Optional[make_union(int, Tuple)]) is False
+    assert check([5], Optional[make_union(int, tuple)]) is False
+    assert check('kek', Optional[make_union(int, tuple)]) is False
 
 
-@pytest.mark.skipif(sys.version_info < (3, 10), reason='This operation became available in Python 3.9')
-def test_optional_union_new_style():
-    def make_hint(x, y):
-        return x | y
-
-    assert check(None, Optional[make_hint(int, str)]) is True
-    assert check(1, Optional[make_hint(int, str)]) is True
-    assert check('kek', Optional[make_hint(int, str)]) is True
-    assert check('', Optional[make_hint(int, str)]) is True
-    assert check(-1000, Optional[make_hint(int, str)]) is True
-    assert check(0, Optional[make_hint(int, str)]) is True
-    assert check((), Optional[make_hint(int, Tuple)]) is True
-    assert check((1, 2, 3), Optional[make_hint(int, Tuple)]) is True
-    assert check((), Optional[make_hint(int, tuple)]) is True
-    assert check((1, 2, 3), Optional[make_hint(int, tuple)]) is True
-
-    assert check(1.0, Optional[make_hint(int, str)]) is False
-    assert check([1.0], Optional[make_hint(int, str)]) is False
-    assert check([1], Optional[make_hint(int, str)]) is False
-    assert check(['kek'], Optional[make_hint(int, str)]) is False
-    assert check([None], Optional[make_hint(int, str)]) is False
-    assert check([[]], Optional[make_hint(int, str)]) is False
-    assert check([], Optional[make_hint(int, Tuple)]) is False
-    assert check([1, 2, 3], Optional[make_hint(int, Tuple)]) is False
-    assert check([5], Optional[make_hint(int, tuple)]) is False
-    assert check('kek', Optional[make_hint(int, tuple)]) is False
-
-
-@pytest.mark.parametrize(
-    ['list_type'],
-    [
-        (List,),
-        (list,),
-    ],
-)
 @pytest.mark.parametrize(
     ['addictional_parameters'],
     [
@@ -323,13 +252,6 @@ def test_list_without_arguments(list_type, addictional_parameters):
     assert not check(None, list_type, **addictional_parameters)
 
 
-@pytest.mark.parametrize(
-    ['tuple_type'],
-    [
-        (Tuple,),
-        (tuple,),
-    ],
-)
 @pytest.mark.parametrize(
     ['addictional_parameters'],
     [
@@ -361,13 +283,6 @@ def test_tuple_without_arguments(tuple_type, addictional_parameters):
 
 
 @pytest.mark.parametrize(
-    ['set_type'],
-    [
-        (Set,),
-        (set,),
-    ],
-)
-@pytest.mark.parametrize(
     ['addictional_parameters'],
     [
         ({},),
@@ -393,13 +308,6 @@ def test_set_without_arguments(set_type, addictional_parameters):
 
 
 @pytest.mark.parametrize(
-    ['dict_type'],
-    [
-        (Dict,),
-        (dict,),
-    ],
-)
-@pytest.mark.parametrize(
     ['addictional_parameters'],
     [
         ({},),
@@ -422,8 +330,7 @@ def test_dict_without_arguments(dict_type, addictional_parameters):
     assert not check(1.0, dict_type, **addictional_parameters)
     assert not check('{1: None}', dict_type, **addictional_parameters)
     assert not check('kek', dict_type, **addictional_parameters)
-    assert not check(dict, dict_type, **addictional_parameters)
-    assert not check(Dict, dict_type, **addictional_parameters)
+    assert not check(dict_type, dict_type, **addictional_parameters)
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
@@ -518,124 +425,82 @@ def test_sequence_is_not_checking_content():
     assert check([1, 2, 3], Sequence[str])
 
 
-@pytest.mark.parametrize(
-    ['base_type'],
-    [
-        (List,),
-        (list,),
-    ],
-)
-def test_list_with_values_in_strict_mode(base_type):
-    if sys.version_info < (3, 9) and base_type is list:
+def test_list_with_values_in_strict_mode(list_type):
+    if sys.version_info < (3, 9) and list_type is list:
         return
 
-    assert check([], base_type[int], strict=True)
-    assert check([], base_type[str], strict=True)
+    assert check([], list_type[int], strict=True)
+    assert check([], list_type[str], strict=True)
 
-    assert check([1, 2, 3], base_type[int], strict=True)
-    assert check(['1', '2', '3'], base_type[str], strict=True)
+    assert check([1, 2, 3], list_type[int], strict=True)
+    assert check(['1', '2', '3'], list_type[str], strict=True)
 
-    assert check([1, 2, 3, 4, [1, 2, 3]], base_type[Union[int, base_type[int]]], strict=True)
+    assert check([1, 2, 3, 4, [1, 2, 3]], list_type[Union[int, list_type[int]]], strict=True)
 
-    assert not check([1, 2, 3], base_type[str], strict=True)
-    assert not check(['1', '2', 3], base_type[int], strict=True)
-    assert not check(['1', '2', '3'], base_type[int], strict=True)
+    assert not check([1, 2, 3], list_type[str], strict=True)
+    assert not check(['1', '2', 3], list_type[int], strict=True)
+    assert not check(['1', '2', '3'], list_type[int], strict=True)
 
-    assert not check((1, 2, 3), base_type[str], strict=True)
-    assert not check("123", base_type[str], strict=True)
+    assert not check((1, 2, 3), list_type[str], strict=True)
+    assert not check("123", list_type[str], strict=True)
 
-    assert not check([1, 2, 3, 4, [1, 2, '3']], base_type[Union[int, base_type[int]]], strict=True)
+    assert not check([1, 2, 3, 4, [1, 2, '3']], list_type[Union[int, list_type[int]]], strict=True)
 
 
-@pytest.mark.parametrize(
-    ['base_type'],
-    [
-        (Dict,),
-        (dict,),
-    ],
-)
-def test_dict_with_values_in_strict_mode(base_type):
-    if sys.version_info < (3, 9) and base_type is dict:
+def test_dict_with_values_in_strict_mode(dict_type):
+    if sys.version_info < (3, 9) and dict_type is dict:
         return
 
-    assert check({}, base_type[int, int], strict=True)
-    assert check({}, base_type[str, str], strict=True)
+    assert check({}, dict_type[int, int], strict=True)
+    assert check({}, dict_type[str, str], strict=True)
 
-    assert not check('kek', base_type[int, int], strict=True)
-    assert not check('{}', base_type[str, str], strict=True)
+    assert not check('kek', dict_type[int, int], strict=True)
+    assert not check('{}', dict_type[str, str], strict=True)
 
-    assert check({1: 1}, base_type[int, int], strict=True)
-    assert check({'kek': 1}, base_type[str, int], strict=True)
-    assert check({'kek': 'lol'}, base_type[str, str], strict=True)
-    assert check({'kek': ['lol', 'kek']}, base_type[str, List[str]], strict=True)
-    assert check({'kek': ['lol', 1, 2, 3]}, base_type[str, List[Union[str, int]]], strict=True)
-    assert check({123: ['lol', 1, 2, 3]}, base_type[int, List[Union[str, int]]], strict=True)
-    assert check({123: {'lol': 'kek'}}, base_type[int, base_type[str, str]], strict=True)
+    assert check({1: 1}, dict_type[int, int], strict=True)
+    assert check({'kek': 1}, dict_type[str, int], strict=True)
+    assert check({'kek': 'lol'}, dict_type[str, str], strict=True)
+    assert check({'kek': ['lol', 'kek']}, dict_type[str, List[str]], strict=True)
+    assert check({'kek': ['lol', 1, 2, 3]}, dict_type[str, List[Union[str, int]]], strict=True)
+    assert check({123: ['lol', 1, 2, 3]}, dict_type[int, List[Union[str, int]]], strict=True)
+    assert check({123: {'lol': 'kek'}}, dict_type[int, dict_type[str, str]], strict=True)
 
-    assert not check({1: 'kek'}, base_type[int, int], strict=True)
-    assert not check({1: 1}, base_type[str, int], strict=True)
-    assert not check({123: {'lol': 123}}, base_type[int, base_type[str, str]], strict=True)
-    assert not check({123: {123: 'kek'}}, base_type[int, base_type[str, str]], strict=True)
-    assert not check({123: ['lol', 1, 2, 3.0]}, base_type[int, List[Union[str, int]]], strict=True)
+    assert not check({1: 'kek'}, dict_type[int, int], strict=True)
+    assert not check({1: 1}, dict_type[str, int], strict=True)
+    assert not check({123: {'lol': 123}}, dict_type[int, dict_type[str, str]], strict=True)
+    assert not check({123: {123: 'kek'}}, dict_type[int, dict_type[str, str]], strict=True)
+    assert not check({123: ['lol', 1, 2, 3.0]}, dict_type[int, List[Union[str, int]]], strict=True)
 
 
-@pytest.mark.parametrize(
-    ['base_type'],
-    [
-        (Tuple,),
-        (tuple,),
-    ],
-)
-def test_tuple_with_values_in_strict_mode(base_type):
-    if sys.version_info < (3, 9) and base_type is tuple:
+def test_tuple_with_values_in_strict_mode(tuple_type):
+    if sys.version_info < (3, 9) and tuple_type is tuple:
         return
 
-    assert not check((), base_type[int], strict=True)
-    assert not check((), base_type[str], strict=True)
-    assert check((), base_type[int, ...], strict=True)
-    assert check((), base_type[str, ...], strict=True)
+    assert not check((), tuple_type[int], strict=True)
+    assert not check((), tuple_type[str], strict=True)
+    assert check((), tuple_type[int, ...], strict=True)
+    assert check((), tuple_type[str, ...], strict=True)
 
-    assert not check((1), base_type[int, int], strict=True)
-    assert not check(('kek'), base_type[str, str], strict=True)
+    assert not check((1), tuple_type[int, int], strict=True)
+    assert not check(('kek'), tuple_type[str, str], strict=True)
 
-    assert check((1, 2, 3), base_type[int, ...], strict=True)
-    assert check(('1', '2', '3'), base_type[str, ...], strict=True)
+    assert check((1, 2, 3), tuple_type[int, ...], strict=True)
+    assert check(('1', '2', '3'), tuple_type[str, ...], strict=True)
 
-    assert check((1, 2, 3, 4, (1, 2, 3)), base_type[Union[int, base_type[int, ...]], ...], strict=True)
+    assert check((1, 2, 3, 4, (1, 2, 3)), tuple_type[Union[int, tuple_type[int, ...]], ...], strict=True)
 
-    assert not check((1, 2, 3), base_type[str, ...], strict=True)
-    assert not check(('1', '2', 3), base_type[int, ...], strict=True)
-    assert not check(('1', '2', '3'), base_type[int, ...], strict=True)
+    assert not check((1, 2, 3), tuple_type[str, ...], strict=True)
+    assert not check(('1', '2', 3), tuple_type[int, ...], strict=True)
+    assert not check(('1', '2', '3'), tuple_type[int, ...], strict=True)
 
-    assert not check((1, 2, 3), base_type[str, ...], strict=True)
-    assert not check([1, 2, 3], base_type[str, ...], strict=True)
-    assert not check(['1', '2', '3'], base_type[str, ...], strict=True)
-    assert not check("123", base_type[str, ...], strict=True)
+    assert not check((1, 2, 3), tuple_type[str, ...], strict=True)
+    assert not check([1, 2, 3], tuple_type[str, ...], strict=True)
+    assert not check(['1', '2', '3'], tuple_type[str, ...], strict=True)
+    assert not check("123", tuple_type[str, ...], strict=True)
 
-    assert not check((1, 2, 3, 4, (1, 2, '3')), base_type[Union[int, base_type[int]]], strict=True)
+    assert not check((1, 2, 3, 4, (1, 2, '3')), tuple_type[Union[int, tuple_type[int]]], strict=True)
 
 
-@pytest.mark.parametrize(
-    ['tuple_type'],
-    [
-        (Tuple,),
-        (tuple,),
-    ],
-)
-@pytest.mark.parametrize(
-    ['list_type'],
-    [
-        (List,),
-        (list,),
-    ],
-)
-@pytest.mark.parametrize(
-    ['dict_type'],
-    [
-        (Dict,),
-        (dict,),
-    ],
-)
 def test_lists_are_tuples_flag_is_true_in_strict_mode(tuple_type, list_type, dict_type):
     if sys.version_info < (3, 9) and (tuple_type is tuple or list_type is list or dict_type is dict):
         return

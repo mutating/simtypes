@@ -125,218 +125,175 @@ def test_get_bool_value():
         from_string('nono', bool)
 
 
-@pytest.mark.parametrize(
-    ['base_list_type'],
-    [
-        (List,),
-        (list,),
-    ],
-)
-@pytest.mark.parametrize(
-    ['base_dict_type'],
-    [
-        (Dict,),
-        (dict,),
-    ],
-)
-def test_get_list_value(base_list_type, base_dict_type):
-    if version_info < (3, 9) and (base_list_type is list or base_dict_type is dict):
+def test_get_list_value(list_type, dict_type):
+    if version_info < (3, 9) and (list_type is list or dict_type is dict):
         return
 
-    assert from_string('[]', base_list_type) == []
-    assert from_string('[]', base_list_type[int]) == []
-    assert from_string('[]', base_list_type[str]) == []
+    assert from_string('[]', list_type) == []
+    assert from_string('[]', list_type[int]) == []
+    assert from_string('[]', list_type[str]) == []
 
-    assert from_string('[1, 2, 3]', base_list_type[int]) == [1, 2, 3]
-    assert from_string('["lol", "kek"]', base_list_type[str]) == ["lol", "kek"]
+    assert from_string('[1, 2, 3]', list_type[int]) == [1, 2, 3]
+    assert from_string('["lol", "kek"]', list_type[str]) == ["lol", "kek"]
 
-    assert from_string('[["lol", "kek"], ["lol", "kek"]]', base_list_type[base_list_type[str]]) == [["lol", "kek"], ["lol", "kek"]]
-    assert from_string('[{"lol": "kek"}, {"lol": "kek"}]', base_list_type[base_dict_type[str, str]]) == [{'lol': 'kek'}, {'lol': 'kek'}]
-
-    with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a list of the specified format.')):
-        from_string('', base_list_type)
+    assert from_string('[["lol", "kek"], ["lol", "kek"]]', list_type[list_type[str]]) == [["lol", "kek"], ["lol", "kek"]]
+    assert from_string('[{"lol": "kek"}, {"lol": "kek"}]', list_type[dict_type[str, str]]) == [{'lol': 'kek'}, {'lol': 'kek'}]
 
     with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a list of the specified format.')):
-        from_string('', base_list_type[int])
+        from_string('', list_type)
 
     with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a list of the specified format.')):
-        from_string('', base_list_type[str])
+        from_string('', list_type[int])
+
+    with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a list of the specified format.')):
+        from_string('', list_type[str])
 
     with pytest.raises(TypeError, match=match('The string "[1, 2, "3"]" cannot be interpreted as a list of the specified format.')):
-        from_string('[1, 2, "3"]', base_list_type[int])
+        from_string('[1, 2, "3"]', list_type[int])
 
     with pytest.raises(TypeError, match=match('The string "[1, 2, "3"]" cannot be interpreted as a list of the specified format.')):
-        from_string('[1, 2, "3"]', base_list_type[str])
+        from_string('[1, 2, "3"]', list_type[str])
 
     with pytest.raises(TypeError, match=match('The string "[1, 2, "3"" cannot be interpreted as a list of the specified format.')):
-        from_string('[1, 2, "3"', base_list_type[str])
+        from_string('[1, 2, "3"', list_type[str])
 
     with pytest.raises(TypeError, match=match('The string "[["lol", "kek"], ["lol", "kek"]]" cannot be interpreted as a list of the specified format.')):
-        from_string('[["lol", "kek"], ["lol", "kek"]]', base_list_type[base_list_type[int]])
+        from_string('[["lol", "kek"], ["lol", "kek"]]', list_type[list_type[int]])
 
     with pytest.raises(TypeError, match=match('The string "[["lol", "kek"], ["lol", "kek"]]" cannot be interpreted as a list of the specified format.')):
-        from_string('[["lol", "kek"], ["lol", "kek"]]', base_list_type[base_dict_type[int, int]])
+        from_string('[["lol", "kek"], ["lol", "kek"]]', list_type[dict_type[int, int]])
 
     with pytest.raises(TypeError, match=match('The string "[{"lol": "kek"}, {"lol": "kek"}]" cannot be interpreted as a list of the specified format.')):
-        from_string('[{"lol": "kek"}, {"lol": "kek"}]', base_list_type[base_dict_type[str, int]])
+        from_string('[{"lol": "kek"}, {"lol": "kek"}]', list_type[dict_type[str, int]])
 
     with pytest.raises(TypeError, match=match('The string "[{"lol": "kek"}, {"lol": "kek"}]" cannot be interpreted as a list of the specified format.')):
-        from_string('[{"lol": "kek"}, {"lol": "kek"}]', base_list_type[base_dict_type[int, str]])
+        from_string('[{"lol": "kek"}, {"lol": "kek"}]', list_type[dict_type[int, str]])
 
     with pytest.raises(TypeError, match=match('The string "[{"lol": "kek"}, {"lol": "kek"}]" cannot be interpreted as a list of the specified format.')):
-        from_string('[{"lol": "kek"}, {"lol": "kek"}]', base_list_type[base_list_type[str]])
+        from_string('[{"lol": "kek"}, {"lol": "kek"}]', list_type[list_type[str]])
 
 
-
-@pytest.mark.parametrize(
-    ['base_tuple_type'],
-    [
-        (Tuple,),
-        (tuple,),
-    ],
-)
-@pytest.mark.parametrize(
-    ['base_dict_type'],
-    [
-        (Dict,),
-        (dict,),
-    ],
-)
-def test_get_tuple_value(base_tuple_type, base_dict_type):
-    if version_info < (3, 9) and (base_tuple_type is tuple or base_dict_type is dict):
+def test_get_tuple_value(tuple_type, dict_type):
+    if version_info < (3, 9) and (tuple_type is tuple or dict_type is dict):
         return
 
-    assert from_string('[]', base_tuple_type) == []
-    assert from_string('[]', base_tuple_type[int, ...]) == []
-    assert from_string('[]', base_tuple_type[str, ...]) == []
+    assert from_string('[]', tuple_type) == []
+    assert from_string('[]', tuple_type[int, ...]) == []
+    assert from_string('[]', tuple_type[str, ...]) == []
 
-    assert from_string('[1, 2, 3]', base_tuple_type[int, ...]) == [1, 2, 3]
-    assert from_string('["lol", "kek"]', base_tuple_type[str, ...]) == ["lol", "kek"]
-    assert from_string('[1, 2, 3]', base_tuple_type[int, int, int]) == [1, 2, 3]
-    assert from_string('["lol", "kek"]', base_tuple_type[str, str]) == ["lol", "kek"]
+    assert from_string('[1, 2, 3]', tuple_type[int, ...]) == [1, 2, 3]
+    assert from_string('["lol", "kek"]', tuple_type[str, ...]) == ["lol", "kek"]
+    assert from_string('[1, 2, 3]', tuple_type[int, int, int]) == [1, 2, 3]
+    assert from_string('["lol", "kek"]', tuple_type[str, str]) == ["lol", "kek"]
 
-    assert from_string('[["lol", "kek"], ["lol", "kek"]]', base_tuple_type[base_tuple_type[str, str], ...]) == [["lol", "kek"], ["lol", "kek"]]
-    assert from_string('[{"lol": "kek"}, {"lol": "kek"}]', base_tuple_type[base_dict_type[str, str], ...]) == [{'lol': 'kek'}, {'lol': 'kek'}]
-
-    with pytest.raises(TypeError, match=match('The string "[]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[]', base_tuple_type[int])
+    assert from_string('[["lol", "kek"], ["lol", "kek"]]', tuple_type[tuple_type[str, str], ...]) == [["lol", "kek"], ["lol", "kek"]]
+    assert from_string('[{"lol": "kek"}, {"lol": "kek"}]', tuple_type[dict_type[str, str], ...]) == [{'lol': 'kek'}, {'lol': 'kek'}]
 
     with pytest.raises(TypeError, match=match('The string "[]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[]', base_tuple_type[str])
+        from_string('[]', tuple_type[int])
+
+    with pytest.raises(TypeError, match=match('The string "[]" cannot be interpreted as a tuple of the specified format.')):
+        from_string('[]', tuple_type[str])
 
     with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a tuple of the specified format.')):
-        from_string('', base_tuple_type)
+        from_string('', tuple_type)
 
     with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a tuple of the specified format.')):
-        from_string('', base_tuple_type[int])
+        from_string('', tuple_type[int])
 
     with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a tuple of the specified format.')):
-        from_string('', base_tuple_type[str])
+        from_string('', tuple_type[str])
 
     with pytest.raises(TypeError, match=match('The string "[1, 2, "3"]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[1, 2, "3"]', base_tuple_type[int])
+        from_string('[1, 2, "3"]', tuple_type[int])
 
     with pytest.raises(TypeError, match=match('The string "[1, 2, "3"]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[1, 2, "3"]', base_tuple_type[str])
+        from_string('[1, 2, "3"]', tuple_type[str])
 
     with pytest.raises(TypeError, match=match('The string "[1, 2, "3"" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[1, 2, "3"', base_tuple_type[str])
+        from_string('[1, 2, "3"', tuple_type[str])
 
     with pytest.raises(TypeError, match=match('The string "[["lol", "kek"], ["lol", "kek"]]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[["lol", "kek"], ["lol", "kek"]]', base_tuple_type[base_tuple_type[int]])
+        from_string('[["lol", "kek"], ["lol", "kek"]]', tuple_type[tuple_type[int]])
 
     with pytest.raises(TypeError, match=match('The string "[["lol", "kek"], ["lol", "kek"]]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[["lol", "kek"], ["lol", "kek"]]', base_tuple_type[base_dict_type[int, int]])
+        from_string('[["lol", "kek"], ["lol", "kek"]]', tuple_type[dict_type[int, int]])
 
     with pytest.raises(TypeError, match=match('The string "[{"lol": "kek"}, {"lol": "kek"}]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[{"lol": "kek"}, {"lol": "kek"}]', base_tuple_type[base_dict_type[str, int]])
+        from_string('[{"lol": "kek"}, {"lol": "kek"}]', tuple_type[dict_type[str, int]])
 
     with pytest.raises(TypeError, match=match('The string "[{"lol": "kek"}, {"lol": "kek"}]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[{"lol": "kek"}, {"lol": "kek"}]', base_tuple_type[base_dict_type[int, str]])
+        from_string('[{"lol": "kek"}, {"lol": "kek"}]', tuple_type[dict_type[int, str]])
 
     with pytest.raises(TypeError, match=match('The string "[{"lol": "kek"}, {"lol": "kek"}]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[{"lol": "kek"}, {"lol": "kek"}]', base_tuple_type[base_tuple_type[str]])
+        from_string('[{"lol": "kek"}, {"lol": "kek"}]', tuple_type[tuple_type[str]])
 
 
-@pytest.mark.parametrize(
-    ['base_dict_type'],
-    [
-        (Dict,),
-        (dict,),
-    ],
-)
-@pytest.mark.parametrize(
-    ['base_list_type'],
-    [
-        (List,),
-        (list,),
-    ],
-)
-def test_get_dict_value(base_dict_type, base_list_type):
-    if version_info < (3, 9) and (base_dict_type is dict or base_list_type is list):
+def test_get_dict_value(dict_type, list_type):
+    if version_info < (3, 9) and (dict_type is dict or list_type is list):
         return
 
-    assert from_string('{}', base_dict_type) == {}
-    assert from_string('{}', base_dict_type[int, int]) == {}
-    assert from_string('{}', base_dict_type[str, str]) == {}
-    assert from_string('{}', base_dict_type[int, str]) == {}
-    assert from_string('{}', base_dict_type[str, int]) == {}
+    assert from_string('{}', dict_type) == {}
+    assert from_string('{}', dict_type[int, int]) == {}
+    assert from_string('{}', dict_type[str, str]) == {}
+    assert from_string('{}', dict_type[int, str]) == {}
+    assert from_string('{}', dict_type[str, int]) == {}
 
-    assert from_string('{"1": 1, "2": 2, "3": 3}', base_dict_type[str, int]) == {"1": 1, "2": 2, "3": 3}
-    assert from_string('{"lol": "kek"}', base_dict_type[str, str]) == {"lol": "kek"}
-    assert from_string('{"lol": 1, "kek": 2}', base_dict_type[str, int]) == {"lol": 1, "kek": 2}
+    assert from_string('{"1": 1, "2": 2, "3": 3}', dict_type[str, int]) == {"1": 1, "2": 2, "3": 3}
+    assert from_string('{"lol": "kek"}', dict_type[str, str]) == {"lol": "kek"}
+    assert from_string('{"lol": 1, "kek": 2}', dict_type[str, int]) == {"lol": 1, "kek": 2}
 
-    assert from_string('{"kek": ["lol", "kek"]}', base_dict_type[str, base_list_type[str]]) == {"kek": ["lol", "kek"]}
-    assert from_string('{"123": [{"lol": "kek"}, {"lol": "kek"}]}', base_dict_type[str, base_list_type[base_dict_type[str, str]]]) == {"123": [{"lol": "kek"}, {"lol": "kek"}]}
-    assert from_string('{"123": [{"lol": 1}, {"lol": 2}]}', base_dict_type[str, base_list_type[base_dict_type[str, int]]]) == {"123": [{"lol": 1}, {"lol": 2}]}
-
-    with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a dict of the specified format.')):
-        from_string('', base_dict_type)
+    assert from_string('{"kek": ["lol", "kek"]}', dict_type[str, list_type[str]]) == {"kek": ["lol", "kek"]}
+    assert from_string('{"123": [{"lol": "kek"}, {"lol": "kek"}]}', dict_type[str, list_type[dict_type[str, str]]]) == {"123": [{"lol": "kek"}, {"lol": "kek"}]}
+    assert from_string('{"123": [{"lol": 1}, {"lol": 2}]}', dict_type[str, list_type[dict_type[str, int]]]) == {"123": [{"lol": 1}, {"lol": 2}]}
 
     with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a dict of the specified format.')):
-        from_string('', base_dict_type[int, int])
+        from_string('', dict_type)
 
     with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a dict of the specified format.')):
-        from_string('', base_dict_type[int, str])
+        from_string('', dict_type[int, int])
 
     with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a dict of the specified format.')):
-        from_string('', base_dict_type[str, str])
+        from_string('', dict_type[int, str])
 
     with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a dict of the specified format.')):
-        from_string('', base_dict_type[str, int])
+        from_string('', dict_type[str, str])
+
+    with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a dict of the specified format.')):
+        from_string('', dict_type[str, int])
 
     with pytest.raises(TypeError, match=match('The string "{" cannot be interpreted as a dict of the specified format.')):
-        from_string('{', base_dict_type[str, int])
+        from_string('{', dict_type[str, int])
 
     with pytest.raises(TypeError, match=match('The string "}" cannot be interpreted as a dict of the specified format.')):
-        from_string('}', base_dict_type[str, int])
+        from_string('}', dict_type[str, int])
 
     with pytest.raises(TypeError, match=match('The string "}" cannot be interpreted as a dict of the specified format.')):
-        from_string('}', base_dict_type[int, int])
+        from_string('}', dict_type[int, int])
 
     with pytest.raises(TypeError, match=match('The string "}" cannot be interpreted as a dict of the specified format.')):
-        from_string('}', base_dict_type)
+        from_string('}', dict_type)
 
     with pytest.raises(TypeError, match=match('The string "{1: 1}" cannot be interpreted as a dict of the specified format.')):
-        from_string('{1: 1}', base_dict_type[int, str])
+        from_string('{1: 1}', dict_type[int, str])
 
     with pytest.raises(TypeError, match=match('The string "{1: 1}" cannot be interpreted as a dict of the specified format.')):
-        from_string('{1: 1}', base_dict_type[str, int])
+        from_string('{1: 1}', dict_type[str, int])
 
     with pytest.raises(TypeError, match=match('The string "{"lol": "kek"}" cannot be interpreted as a dict of the specified format.')):
-        from_string('{"lol": "kek"}', base_dict_type[str, int])
+        from_string('{"lol": "kek"}', dict_type[str, int])
 
     with pytest.raises(TypeError, match=match('The string "{"lol": "kek"}" cannot be interpreted as a dict of the specified format.')):
-        from_string('{"lol": "kek"}', base_dict_type[int, str])
+        from_string('{"lol": "kek"}', dict_type[int, str])
 
     with pytest.raises(TypeError, match=match('The string "{"lol": "kek"" cannot be interpreted as a dict of the specified format.')):
-        from_string('{"lol": "kek"', base_dict_type[str, str])
+        from_string('{"lol": "kek"', dict_type[str, str])
 
     with pytest.raises(TypeError, match=match('The string "{"lol": "kek"}" cannot be interpreted as a dict of the specified format.')):
-        from_string('{"lol": "kek"}', base_dict_type[int, int])
+        from_string('{"lol": "kek"}', dict_type[int, int])
 
     with pytest.raises(TypeError, match=match('The string "{"lol": ["kek"]}" cannot be interpreted as a dict of the specified format.')):
-        from_string('{"lol": ["kek"]}', base_dict_type[str, base_list_type[int]])
+        from_string('{"lol": ["kek"]}', dict_type[str, list_type[int]])
 
     with pytest.raises(TypeError, match=match('The string "{"lol": {"kek": "kek"}}" cannot be interpreted as a dict of the specified format.')):
-        from_string('{"lol": {"kek": "kek"}}', base_dict_type[str, base_dict_type[int, str]])
+        from_string('{"lol": {"kek": "kek"}}', dict_type[str, dict_type[int, str]])
