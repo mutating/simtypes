@@ -51,15 +51,11 @@ def make_optional(request):
     return function
 
 
-@pytest.fixture
-def subscribable_list_type(list_type):
-    if sys.version_info < (3, 9):
-        pytest.skip('Subscribing to objects became available in Python 3.9')
-    return list_type
+@pytest.fixture(params=([List] if sys.version_info < (3, 9) else [List, list]))
+def subscribable_list_type(request):
+    return request.param
 
 
-@pytest.fixture
-def subscribable_dict_type(dict_type):
-    if sys.version_info < (3, 9):
-        pytest.skip('Subscribing to objects became available in Python 3.9')
-    return dict_type
+@pytest.fixture(params=([Dict] if sys.version_info < (3, 9) else [Dict, dict]))
+def subscribable_dict_type(request):
+    return request.param
