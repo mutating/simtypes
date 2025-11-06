@@ -5,7 +5,7 @@ try:
 except ImportError:
     NoneType = type(None)  # type: ignore[misc]
 
-from typing import List, Dict, Tuple, Optional, Any, Union
+from typing import Tuple, Optional, Any, Union
 from collections.abc import Sequence
 
 import pytest
@@ -183,26 +183,26 @@ def test_optional(new_style, tuple_type, list_type, make_optional):
     assert check((1, 2, 3), make_optional(tuple_type))
 
 
-def test_optional_union(make_union, tuple_type):
-    assert check(None, Optional[make_union(int, str)])
-    assert check(1, Optional[make_union(int, str)])
-    assert check('kek', Optional[make_union(int, str)])
-    assert check('', Optional[make_union(int, str)])
-    assert check(-1000, Optional[make_union(int, str)])
-    assert check(0, Optional[make_union(int, str)])
-    assert check((), Optional[make_union(int, tuple_type)])
-    assert check((1, 2, 3), Optional[make_union(int, tuple_type)])
+def test_optional_union(make_union, make_optional, tuple_type):
+    assert check(None, make_optional(make_union(int, str)))
+    assert check(1, make_optional(make_union(int, str)))
+    assert check('kek', make_optional(make_union(int, str)))
+    assert check('', make_optional(make_union(int, str)))
+    assert check(-1000, make_optional(make_union(int, str)))
+    assert check(0, make_optional(make_union(int, str)))
+    assert check((), make_optional(make_union(int, tuple_type)))
+    assert check((1, 2, 3), make_optional(make_union(int, tuple_type)))
 
-    assert not check(1.0, Optional[make_union(int, str)])
-    assert not check([1.0], Optional[make_union(int, str)])
-    assert not check([1], Optional[make_union(int, str)])
-    assert not check(['kek'], Optional[make_union(int, str)])
-    assert not check([None], Optional[make_union(int, str)])
-    assert not check([[]], Optional[make_union(int, str)])
-    assert not check([], Optional[make_union(int, tuple_type)])
-    assert not check([1, 2, 3], Optional[make_union(int, tuple_type)])
-    assert not check([5], Optional[make_union(int, tuple_type)])
-    assert not check('kek', Optional[make_union(int, tuple_type)])
+    assert not check(1.0, make_optional(make_union(int, str)))
+    assert not check([1.0], make_optional(make_union(int, str)))
+    assert not check([1], make_optional(make_union(int, str)))
+    assert not check(['kek'], make_optional(make_union(int, str)))
+    assert not check([None], make_optional(make_union(int, str)))
+    assert not check([[]], make_optional(make_union(int, str)))
+    assert not check([], make_optional(make_union(int, tuple_type)))
+    assert not check([1, 2, 3], make_optional(make_union(int, tuple_type)))
+    assert not check([5], make_optional(make_union(int, tuple_type)))
+    assert not check('kek', make_optional(make_union(int, tuple_type)))
 
 
 @pytest.mark.parametrize(
@@ -334,19 +334,12 @@ def test_content_of_tuple_not_in_strict_mode_is_not_checking():
     assert check((None, 'kek', 1, 1.0), Tuple[int])
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
-def test_content_of_dict_not_in_strict_mode_is_not_checking():
-    assert check({}, dict[int, int])
-    assert check({1: 'kek'}, dict[int, int])
-    assert check({'lol': 'kek'}, dict[int, int])
-    assert check({'lol': 1}, dict[int, int])
-    assert check({1.0: 1}, dict[int, int])
-
-    assert check({}, Dict[int, int])
-    assert check({1: 'kek'}, Dict[int, int])
-    assert check({'lol': 'kek'}, Dict[int, int])
-    assert check({'lol': 1}, Dict[int, int])
-    assert check({1.0: 1}, Dict[int, int])
+def test_content_of_dict_not_in_strict_mode_is_not_checking(subscribable_dict_type):
+    assert check({}, subscribable_dict_type[int, int])
+    assert check({1: 'kek'}, subscribable_dict_type[int, int])
+    assert check({'lol': 'kek'}, subscribable_dict_type[int, int])
+    assert check({'lol': 1}, subscribable_dict_type[int, int])
+    assert check({1.0: 1}, subscribable_dict_type[int, int])
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
