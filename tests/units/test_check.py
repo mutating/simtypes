@@ -83,19 +83,13 @@ def test_empty_optional():
         check(None, Optional)
 
 
-def test_union(new_style):
-    if new_style and sys.version_info < (3, 10):
-        return
+def test_union(make_union):
+    assert check(1, make_union(int, str))
+    assert check('hello', make_union(int, str))
+    assert check(1.0, make_union(int, float))
 
-    def make_hint(first, second):
-        return first | second if new_style else Union[first, second]  # Union type expressions appeared in Python 3.10
-
-    assert check(1, make_hint(int, str))
-    assert check('hello', make_hint(int, str))
-    assert check(1.0, make_hint(int, float))
-
-    assert not check(1.0, make_hint(int, str))
-    assert not check(None, make_hint(int, str))
+    assert not check(1.0, make_union(int, str))
+    assert not check(None, make_union(int, str))
 
 
 def test_union_recursive():
@@ -122,79 +116,71 @@ def test_union_recursive():
 
 @pytest.mark.skipif(sys.version_info < (3, 10), reason='Union type expressions appeared in Python 3.10')
 def test_new_style_union_is_recursive():
-    assert check(1, int | float | str) is True
-    assert check(1.0, int | float | str) is True
-    assert check('kek', int | float | str) is True
+    assert check(1, int | float | str)
+    assert check(1.0, int | float | str)
+    assert check('kek', int | float | str)
 
-    assert check(1, int | float | str) is True
-    assert check(1.0, int | float | str) is True
-    assert check('kek', int | float | str) is True
+    assert check(1, int | float | str)
+    assert check(1.0, int | float | str)
+    assert check('kek', int | float | str)
 
-    assert check(None, int | float | str) is False
-    assert check([1, 2, 3], int | float | str) is False
-    assert check(['kek'], int | float | str) is False
-    assert check(('kek',), int | float | str) is False
-    assert check(set(), int | float | str) is False
+    assert not check(None, int | float | str)
+    assert not check([1, 2, 3], int | float | str)
+    assert not check(['kek'], int | float | str)
+    assert not check(('kek',), int | float | str)
+    assert not check(set(), int | float | str)
 
-    assert check(None, int | float | str) is False
-    assert check([1, 2, 3], int | float | str) is False
-    assert check(['kek'], int | float | str) is False
-    assert check(('kek',), int | float | str) is False
-    assert check(set(), int | float | str) is False
-
-
-def test_bool_is_int():
-    assert check(True, int) is True
-    assert check(False, int) is True
-
-    assert check(True, Union[int, str]) is True
-    assert check(True, Union[str, int]) is True
-    assert check(False, Union[int, str]) is True
-    assert check(False, Union[str, int]) is True
-
-    assert check(False, Optional[int]) is True
-    assert check(True, Optional[int]) is True
-
-    assert check(True, Optional[Union[int, str]]) is True
-    assert check(False, Optional[Union[int, str]]) is True
+    assert not check(None, int | float | str)
+    assert not check([1, 2, 3], int | float | str)
+    assert not check(['kek'], int | float | str)
+    assert not check(('kek',), int | float | str)
+    assert not check(set(), int | float | str)
 
 
-def test_optional(new_style, tuple_type, list_type):
-    if sys.version_info < (3, 10) and new_style:
-        return
+def test_bool_is_int(make_optional, make_union):
+    assert check(True, int)
+    assert check(False, int)
 
-    def make_hint(other_hint):
-        if new_style:
-            return other_hint | None  # Union type expressions appeared in Python 3.10
-        return Optional[other_hint]
+    assert check(True, make_union(int, str))
+    assert check(True, make_union(str, int))
+    assert check(False, make_union(int, str))
+    assert check(False, make_union(str, int))
 
-    assert check(None, make_hint(int))
-    assert check(1, make_hint(int))
-    assert check(0, make_hint(int))
-    assert check(-1000, make_hint(int))
+    assert check(False, make_optional(int))
+    assert check(True, make_optional(int))
 
-    assert not check(1.0, make_hint(int))
-    assert not check('1.0', make_hint(int))
-    assert not check('kek', make_hint(int))
-    assert not check('None', make_hint(int))
-    assert not check([1, 2, 3], make_hint(int))
-    assert not check(('kek',), make_hint(int))
-    assert not check((1, 2, 3), make_hint(int))
-    assert not check(set(), make_hint(int))
+    assert check(True, make_optional(make_union(int, str)))
+    assert check(False, make_optional(make_union(int, str)))
 
-    assert check(None, make_hint(str))
-    assert check('1', make_hint(str))
-    assert check('kek', make_hint(str))
-    assert check('', make_hint(str))
 
-    assert not check(1.0, make_hint(str))
-    assert not check(1, make_hint(str))
-    assert not check(['kek'], make_hint(str))
+def test_optional(new_style, tuple_type, list_type, make_optional):
+    assert check(None, make_optional(int))
+    assert check(1, make_optional(int))
+    assert check(0, make_optional(int))
+    assert check(-1000, make_optional(int))
 
-    assert check([], make_hint(list_type))
-    assert not check([], make_hint(tuple_type))
-    assert check((), make_hint(tuple_type))
-    assert check((1, 2, 3), make_hint(tuple_type))
+    assert not check(1.0, make_optional(int))
+    assert not check('1.0', make_optional(int))
+    assert not check('kek', make_optional(int))
+    assert not check('None', make_optional(int))
+    assert not check([1, 2, 3], make_optional(int))
+    assert not check(('kek',), make_optional(int))
+    assert not check((1, 2, 3), make_optional(int))
+    assert not check(set(), make_optional(int))
+
+    assert check(None, make_optional(str))
+    assert check('1', make_optional(str))
+    assert check('kek', make_optional(str))
+    assert check('', make_optional(str))
+
+    assert not check(1.0, make_optional(str))
+    assert not check(1, make_optional(str))
+    assert not check(['kek'], make_optional(str))
+
+    assert check([], make_optional(list_type))
+    assert not check([], make_optional(tuple_type))
+    assert check((), make_optional(tuple_type))
+    assert check((1, 2, 3), make_optional(tuple_type))
 
 
 def test_optional_union(make_union, tuple_type):

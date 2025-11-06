@@ -1,5 +1,5 @@
 import sys
-from typing import Tuple, List, Set, Dict, Union
+from typing import Tuple, List, Set, Dict, Union, Optional
 
 import pytest
 
@@ -37,4 +37,15 @@ def make_union(request):
         return Union[first, second]
     if request.param and sys.version_info < (3, 10):
         pytest.skip('This operation became available in Python 3.9')
+    return function
+
+
+@pytest.fixture(params=[True, False])
+def make_optional(request):
+    def function(hint):
+        if request.param:
+            return hint | None
+        return Optional[hint]
+    if request.param and sys.version_info < (3, 10):
+        pytest.skip('Union type expressions appeared in Python 3.10')
     return function
