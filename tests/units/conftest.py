@@ -35,7 +35,7 @@ def make_union(request):
         if request.param:
             return first | second
         return Union[first, second]
-    if request.param and sys.version_info < (3, 10):
+    if request.param and sys.version_info < (3, 9):
         pytest.skip('This operation became available in Python 3.9')
     return function
 
