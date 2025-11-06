@@ -311,19 +311,12 @@ def test_dict_without_arguments(dict_type, addictional_parameters):
     assert not check(dict_type, dict_type, **addictional_parameters)
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
-def test_content_of_list_not_in_strict_mode_is_not_checking():
-    assert check([], list[int])
-    assert check(['lol', 'kek'], list[int])
-    assert check([1.0, 2.0], list[int])
-    assert check([None, None], list[int])
-    assert check([None, 'kek', 1, 1.0], list[int])
-
-    assert check([], List[int])
-    assert check(['lol', 'kek'], List[int])
-    assert check([1.0, 2.0], List[int])
-    assert check([None, None], List[int])
-    assert check([None, 'kek', 1, 1.0], List[int])
+def test_content_of_list_not_in_strict_mode_is_not_checking(subscribable_list_type):
+    assert check([], subscribable_list_type[int])
+    assert check(['lol', 'kek'], subscribable_list_type[int])
+    assert check([1.0, 2.0], subscribable_list_type[int])
+    assert check([None, None], subscribable_list_type[int])
+    assert check([None, 'kek', 1, 1.0], subscribable_list_type[int])
 
 
 @pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')

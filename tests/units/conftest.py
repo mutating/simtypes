@@ -35,8 +35,8 @@ def make_union(request):
         if request.param:
             return first | second
         return Union[first, second]
-    if request.param and sys.version_info < (3, 9):
-        pytest.skip('This operation became available in Python 3.9')
+    if request.param and sys.version_info < (3, 10):
+        pytest.skip('This operation became available in Python 3.10')
     return function
 
 
@@ -49,3 +49,10 @@ def make_optional(request):
     if request.param and sys.version_info < (3, 10):
         pytest.skip('Union type expressions appeared in Python 3.10')
     return function
+
+
+@pytest.fixture
+def subscribable_list_type(list_type):
+    if sys.version_info < (3, 9):
+        pytest.skip('Subscribing to objects became available in Python 3.9')
+    return list_type
