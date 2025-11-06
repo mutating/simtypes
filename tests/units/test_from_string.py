@@ -169,60 +169,57 @@ def test_get_list_value(list_type, subscribable_dict_type, subscribable_list_typ
         from_string('[{"lol": "kek"}, {"lol": "kek"}]', subscribable_list_type[subscribable_list_type[str]])
 
 
-def test_get_tuple_value(tuple_type, subscribable_dict_type):
-    if version_info < (3, 9) and (tuple_type is tuple):
-        return
-
+def test_get_tuple_value(tuple_type, subscribable_tuple_type, subscribable_dict_type):
     assert from_string('[]', tuple_type) == []
-    assert from_string('[]', tuple_type[int, ...]) == []
-    assert from_string('[]', tuple_type[str, ...]) == []
+    assert from_string('[]', subscribable_tuple_type[int, ...]) == []
+    assert from_string('[]', subscribable_tuple_type[str, ...]) == []
 
-    assert from_string('[1, 2, 3]', tuple_type[int, ...]) == [1, 2, 3]
-    assert from_string('["lol", "kek"]', tuple_type[str, ...]) == ["lol", "kek"]
-    assert from_string('[1, 2, 3]', tuple_type[int, int, int]) == [1, 2, 3]
-    assert from_string('["lol", "kek"]', tuple_type[str, str]) == ["lol", "kek"]
+    assert from_string('[1, 2, 3]', subscribable_tuple_type[int, ...]) == [1, 2, 3]
+    assert from_string('["lol", "kek"]', subscribable_tuple_type[str, ...]) == ["lol", "kek"]
+    assert from_string('[1, 2, 3]', subscribable_tuple_type[int, int, int]) == [1, 2, 3]
+    assert from_string('["lol", "kek"]', subscribable_tuple_type[str, str]) == ["lol", "kek"]
 
-    assert from_string('[["lol", "kek"], ["lol", "kek"]]', tuple_type[tuple_type[str, str], ...]) == [["lol", "kek"], ["lol", "kek"]]
-    assert from_string('[{"lol": "kek"}, {"lol": "kek"}]', tuple_type[subscribable_dict_type[str, str], ...]) == [{'lol': 'kek'}, {'lol': 'kek'}]
-
-    with pytest.raises(TypeError, match=match('The string "[]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[]', tuple_type[int])
+    assert from_string('[["lol", "kek"], ["lol", "kek"]]', subscribable_tuple_type[subscribable_tuple_type[str, str], ...]) == [["lol", "kek"], ["lol", "kek"]]
+    assert from_string('[{"lol": "kek"}, {"lol": "kek"}]', subscribable_tuple_type[subscribable_dict_type[str, str], ...]) == [{'lol': 'kek'}, {'lol': 'kek'}]
 
     with pytest.raises(TypeError, match=match('The string "[]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[]', tuple_type[str])
+        from_string('[]', subscribable_tuple_type[int])
+
+    with pytest.raises(TypeError, match=match('The string "[]" cannot be interpreted as a tuple of the specified format.')):
+        from_string('[]', subscribable_tuple_type[str])
 
     with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a tuple of the specified format.')):
         from_string('', tuple_type)
 
     with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a tuple of the specified format.')):
-        from_string('', tuple_type[int])
+        from_string('', subscribable_tuple_type[int])
 
     with pytest.raises(TypeError, match=match('The string "" cannot be interpreted as a tuple of the specified format.')):
-        from_string('', tuple_type[str])
+        from_string('', subscribable_tuple_type[str])
 
     with pytest.raises(TypeError, match=match('The string "[1, 2, "3"]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[1, 2, "3"]', tuple_type[int])
+        from_string('[1, 2, "3"]', subscribable_tuple_type[int])
 
     with pytest.raises(TypeError, match=match('The string "[1, 2, "3"]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[1, 2, "3"]', tuple_type[str])
+        from_string('[1, 2, "3"]', subscribable_tuple_type[str])
 
     with pytest.raises(TypeError, match=match('The string "[1, 2, "3"" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[1, 2, "3"', tuple_type[str])
+        from_string('[1, 2, "3"', subscribable_tuple_type[str])
 
     with pytest.raises(TypeError, match=match('The string "[["lol", "kek"], ["lol", "kek"]]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[["lol", "kek"], ["lol", "kek"]]', tuple_type[tuple_type[int]])
+        from_string('[["lol", "kek"], ["lol", "kek"]]', subscribable_tuple_type[subscribable_tuple_type[int]])
 
     with pytest.raises(TypeError, match=match('The string "[["lol", "kek"], ["lol", "kek"]]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[["lol", "kek"], ["lol", "kek"]]', tuple_type[subscribable_dict_type[int, int]])
+        from_string('[["lol", "kek"], ["lol", "kek"]]', subscribable_tuple_type[subscribable_dict_type[int, int]])
 
     with pytest.raises(TypeError, match=match('The string "[{"lol": "kek"}, {"lol": "kek"}]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[{"lol": "kek"}, {"lol": "kek"}]', tuple_type[subscribable_dict_type[str, int]])
+        from_string('[{"lol": "kek"}, {"lol": "kek"}]', subscribable_tuple_type[subscribable_dict_type[str, int]])
 
     with pytest.raises(TypeError, match=match('The string "[{"lol": "kek"}, {"lol": "kek"}]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[{"lol": "kek"}, {"lol": "kek"}]', tuple_type[subscribable_dict_type[int, str]])
+        from_string('[{"lol": "kek"}, {"lol": "kek"}]', subscribable_tuple_type[subscribable_dict_type[int, str]])
 
     with pytest.raises(TypeError, match=match('The string "[{"lol": "kek"}, {"lol": "kek"}]" cannot be interpreted as a tuple of the specified format.')):
-        from_string('[{"lol": "kek"}, {"lol": "kek"}]', tuple_type[tuple_type[str]])
+        from_string('[{"lol": "kek"}, {"lol": "kek"}]', subscribable_tuple_type[subscribable_tuple_type[str]])
 
 
 def test_get_dict_value(dict_type, subscribable_list_type, subscribable_dict_type):

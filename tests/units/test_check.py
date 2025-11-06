@@ -319,19 +319,12 @@ def test_content_of_list_not_in_strict_mode_is_not_checking(subscribable_list_ty
     assert check([None, 'kek', 1, 1.0], subscribable_list_type[int])
 
 
-@pytest.mark.skipif(sys.version_info < (3, 9), reason='Subscribing to objects became available in Python 3.9')
-def test_content_of_tuple_not_in_strict_mode_is_not_checking():
-    assert check((), tuple[int])
-    assert check(('lol', 'kek'), tuple[int])
-    assert check((1.0, 2.0), tuple[int])
-    assert check((None, None), tuple[int])
-    assert check((None, 'kek', 1, 1.0), tuple[int])
-
-    assert check((), Tuple[int])
-    assert check(('lol', 'kek'), Tuple[int])
-    assert check((1.0, 2.0), Tuple[int])
-    assert check((None, None), Tuple[int])
-    assert check((None, 'kek', 1, 1.0), Tuple[int])
+def test_content_of_tuple_not_in_strict_mode_is_not_checking(subscribable_tuple_type):
+    assert check((), subscribable_tuple_type[int])
+    assert check(('lol', 'kek'), subscribable_tuple_type[int])
+    assert check((1.0, 2.0), subscribable_tuple_type[int])
+    assert check((None, None), subscribable_tuple_type[int])
+    assert check((None, 'kek', 1, 1.0), subscribable_tuple_type[int])
 
 
 def test_content_of_dict_not_in_strict_mode_is_not_checking(subscribable_dict_type):
@@ -430,53 +423,47 @@ def test_dict_with_values_in_strict_mode(subscribable_dict_type, subscribable_li
     assert not check({123: ['lol', 1, 2, 3.0]}, subscribable_dict_type[int, subscribable_list_type[make_union(str, int)]], strict=True)
 
 
-def test_tuple_with_values_in_strict_mode(tuple_type, make_union):
-    if sys.version_info < (3, 9) and tuple_type is tuple:
-        return
+def test_tuple_with_values_in_strict_mode(subscribable_tuple_type, make_union):
+    assert not check((), subscribable_tuple_type[int], strict=True)
+    assert not check((), subscribable_tuple_type[str], strict=True)
+    assert check((), subscribable_tuple_type[int, ...], strict=True)
+    assert check((), subscribable_tuple_type[str, ...], strict=True)
 
-    assert not check((), tuple_type[int], strict=True)
-    assert not check((), tuple_type[str], strict=True)
-    assert check((), tuple_type[int, ...], strict=True)
-    assert check((), tuple_type[str, ...], strict=True)
+    assert not check((1), subscribable_tuple_type[int, int], strict=True)
+    assert not check(('kek'), subscribable_tuple_type[str, str], strict=True)
 
-    assert not check((1), tuple_type[int, int], strict=True)
-    assert not check(('kek'), tuple_type[str, str], strict=True)
+    assert check((1, 2, 3), subscribable_tuple_type[int, ...], strict=True)
+    assert check(('1', '2', '3'), subscribable_tuple_type[str, ...], strict=True)
 
-    assert check((1, 2, 3), tuple_type[int, ...], strict=True)
-    assert check(('1', '2', '3'), tuple_type[str, ...], strict=True)
+    assert check((1, 2, 3, 4, (1, 2, 3)), subscribable_tuple_type[make_union(int, subscribable_tuple_type[int, ...]), ...], strict=True)
 
-    assert check((1, 2, 3, 4, (1, 2, 3)), tuple_type[make_union(int, tuple_type[int, ...]), ...], strict=True)
+    assert not check((1, 2, 3), subscribable_tuple_type[str, ...], strict=True)
+    assert not check(('1', '2', 3), subscribable_tuple_type[int, ...], strict=True)
+    assert not check(('1', '2', '3'), subscribable_tuple_type[int, ...], strict=True)
 
-    assert not check((1, 2, 3), tuple_type[str, ...], strict=True)
-    assert not check(('1', '2', 3), tuple_type[int, ...], strict=True)
-    assert not check(('1', '2', '3'), tuple_type[int, ...], strict=True)
+    assert not check((1, 2, 3), subscribable_tuple_type[str, ...], strict=True)
+    assert not check([1, 2, 3], subscribable_tuple_type[str, ...], strict=True)
+    assert not check(['1', '2', '3'], subscribable_tuple_type[str, ...], strict=True)
+    assert not check("123", subscribable_tuple_type[str, ...], strict=True)
 
-    assert not check((1, 2, 3), tuple_type[str, ...], strict=True)
-    assert not check([1, 2, 3], tuple_type[str, ...], strict=True)
-    assert not check(['1', '2', '3'], tuple_type[str, ...], strict=True)
-    assert not check("123", tuple_type[str, ...], strict=True)
-
-    assert not check((1, 2, 3, 4, (1, 2, '3')), tuple_type[make_union(int, tuple_type[int])], strict=True)
+    assert not check((1, 2, 3, 4, (1, 2, '3')), subscribable_tuple_type[make_union(int, subscribable_tuple_type[int])], strict=True)
 
 
-def test_lists_are_tuples_flag_is_true_in_strict_mode(tuple_type, subscribable_list_type, subscribable_dict_type, make_union):
-    if sys.version_info < (3, 9) and (tuple_type is tuple):
-        return
-
+def test_lists_are_tuples_flag_is_true_in_strict_mode(subscribable_tuple_type, subscribable_list_type, subscribable_dict_type, make_union):
     assert check(["123"], subscribable_list_type[str], strict=True, lists_are_tuples=True)
-    assert check(["123"], tuple_type[str, ...], strict=True, lists_are_tuples=True)
-    assert check(("123",), tuple_type[str, ...], strict=True, lists_are_tuples=True)
+    assert check(["123"], subscribable_tuple_type[str, ...], strict=True, lists_are_tuples=True)
+    assert check(("123",), subscribable_tuple_type[str, ...], strict=True, lists_are_tuples=True)
 
-    assert check([("123", "456"), ("123", "456")], tuple_type[tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
-    assert check([("123", "456"), ["123", "456"]], tuple_type[tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
-    assert check([["123", "456"], ["123", "456"]], tuple_type[tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
-    assert check((["123", "456"], ["123", "456"]), tuple_type[tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
-    assert check((("123", "456"), ("123", "456")), tuple_type[tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
+    assert check([("123", "456"), ("123", "456")], subscribable_tuple_type[subscribable_tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
+    assert check([("123", "456"), ["123", "456"]], subscribable_tuple_type[subscribable_tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
+    assert check([["123", "456"], ["123", "456"]], subscribable_tuple_type[subscribable_tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
+    assert check((["123", "456"], ["123", "456"]), subscribable_tuple_type[subscribable_tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
+    assert check((("123", "456"), ("123", "456")), subscribable_tuple_type[subscribable_tuple_type[str, ...], ...], strict=True, lists_are_tuples=True)
 
-    assert check(["123"], make_union(tuple_type[str, ...], int), strict=True, lists_are_tuples=True)
-    assert check([1, 2, 3], make_union(tuple_type[str, ...], tuple_type[int, ...]), strict=True, lists_are_tuples=True)
+    assert check(["123"], make_union(subscribable_tuple_type[str, ...], int), strict=True, lists_are_tuples=True)
+    assert check([1, 2, 3], make_union(subscribable_tuple_type[str, ...], subscribable_tuple_type[int, ...]), strict=True, lists_are_tuples=True)
 
-    assert check([[1, 2, 3], [4, 5, 6]], subscribable_list_type[make_union(tuple_type[str, ...], tuple_type[int, ...])], strict=True, lists_are_tuples=True)
-    assert check([[1, 2, 3], [4, 5, 6]], tuple_type[tuple_type[int, ...], ...], strict=True, lists_are_tuples=True)
-    assert check(([1, 2, 3], [4, 5, 6]), tuple_type[make_union(tuple_type[str, ...], tuple_type[int, ...]), ...], strict=True, lists_are_tuples=True)
-    assert check({1: [1, 2, 3], 2: [4, 5, 6]}, subscribable_dict_type[int, make_union(tuple_type[str, ...], tuple_type[int, ...])], strict=True, lists_are_tuples=True)
+    assert check([[1, 2, 3], [4, 5, 6]], subscribable_list_type[make_union(subscribable_tuple_type[str, ...], subscribable_tuple_type[int, ...])], strict=True, lists_are_tuples=True)
+    assert check([[1, 2, 3], [4, 5, 6]], subscribable_tuple_type[subscribable_tuple_type[int, ...], ...], strict=True, lists_are_tuples=True)
+    assert check(([1, 2, 3], [4, 5, 6]), subscribable_tuple_type[make_union(subscribable_tuple_type[str, ...], subscribable_tuple_type[int, ...]), ...], strict=True, lists_are_tuples=True)
+    assert check({1: [1, 2, 3], 2: [4, 5, 6]}, subscribable_dict_type[int, make_union(subscribable_tuple_type[str, ...], subscribable_tuple_type[int, ...])], strict=True, lists_are_tuples=True)

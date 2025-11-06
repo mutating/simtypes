@@ -59,3 +59,8 @@ def subscribable_list_type(request):
 @pytest.fixture(params=([Dict] if sys.version_info < (3, 9) else [Dict, dict]))
 def subscribable_dict_type(request):
     return request.param
+
+
+@pytest.fixture(params=([Tuple] if sys.version_info < (3, 9) else [Tuple, tuple]))
+def subscribable_tuple_type(request):
+    return request.param
