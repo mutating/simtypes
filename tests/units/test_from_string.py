@@ -299,4 +299,4 @@ def test_get_dict_value(dict_type, subscribable_list_type, subscribable_dict_typ
     ],
 )
 def test_get_any(string):
-    from_string(string, Any) == string
+    assert from_string(string, Any) == string
