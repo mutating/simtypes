@@ -1,4 +1,5 @@
-![logo](https://raw.githubusercontent.com/pomponchik/simtypes/develop/docs/assets/logo_2.svg)
+<details>
+  <summary>ⓘ</summary>
 
 [![Downloads](https://static.pepy.tech/badge/simtypes/month)](https://pepy.tech/project/simtypes)
 [![Downloads](https://static.pepy.tech/badge/simtypes)](https://pepy.tech/project/simtypes)
@@ -12,6 +13,9 @@
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/pomponchik/simtypes)
 
+</details>
+
+![logo](https://raw.githubusercontent.com/pomponchik/simtypes/develop/docs/assets/logo_2.svg)
 
 Python type checking tools are usually very complex. In this case, we have thrown out almost all the places where there is a lot of complexity, and left only the most obvious and necessary things for runtime.
 
