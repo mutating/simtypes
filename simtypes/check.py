@@ -16,25 +16,25 @@ from typing import List, Type, Union, Any, get_args, get_origin
 from simtypes.typing import ExpectedType
 
 
-def check(value: Any, type: Type[ExpectedType], strict: bool = False, lists_are_tuples: bool = False, pass_mocks: bool = True) -> TypeIs[ExpectedType]:
-    if type is Any:  # type: ignore[comparison-overlap]
+def check(value: Any, type_hint: Type[ExpectedType], strict: bool = False, lists_are_tuples: bool = False, pass_mocks: bool = True) -> TypeIs[ExpectedType]:
+    if type_hint is Any:  # type: ignore[comparison-overlap]
         return True
 
     elif (isinstance(value, Mock) or isinstance(value, MagicMock)) and pass_mocks:
         return True
 
-    elif type is None:
+    elif type_hint is None:
         return value is None
 
-    origin_type = get_origin(type)
+    origin_type = get_origin(type_hint)
 
     if origin_type is Union or origin_type is UnionType:
-        return any(check(value, argument, strict=strict, lists_are_tuples=lists_are_tuples) for argument in get_args(type))
+        return any(check(value, argument, strict=strict, lists_are_tuples=lists_are_tuples) for argument in get_args(type_hint))
 
     elif origin_type is list and strict:
         if not isinstance(value, list):
             return False
-        arguments = get_args(type)
+        arguments = get_args(type_hint)
         if not arguments:
             return True
         return all(check(subvalue, arguments[0], strict=strict, lists_are_tuples=lists_are_tuples) for subvalue in value)
@@ -42,7 +42,7 @@ def check(value: Any, type: Type[ExpectedType], strict: bool = False, lists_are_
     elif origin_type is dict and strict:
         if not isinstance(value, dict):
             return False
-        arguments = get_args(type)
+        arguments = get_args(type_hint)
         if not arguments:
             return True
         return all(check(key, arguments[0], strict=strict, lists_are_tuples=lists_are_tuples) and check(subvalue, arguments[1], strict=strict, lists_are_tuples=lists_are_tuples) for key, subvalue in value.items())
@@ -52,7 +52,7 @@ def check(value: Any, type: Type[ExpectedType], strict: bool = False, lists_are_
         if all(not isinstance(value, x) for x in types_to_check):
             return False
 
-        arguments = get_args(type)
+        arguments = get_args(type_hint)
 
         if not arguments:
             return True
@@ -69,10 +69,10 @@ def check(value: Any, type: Type[ExpectedType], strict: bool = False, lists_are_
         if origin_type is not None:
             return isinstance(value, origin_type)
 
-        if not isclass(type):
+        if not isclass(type_hint):
             raise ValueError('Type must be a valid type object.')
 
-        if type is tuple and lists_are_tuples:
+        if type_hint is tuple and lists_are_tuples:
             return isinstance(value, tuple) or isinstance(value, list)  # pragma: no cover
 
-        return isinstance(value, type)
+        return isinstance(value, type_hint)
