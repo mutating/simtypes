@@ -1,4 +1,5 @@
 from inspect import isclass
+from unittest.mock import Mock, MagicMock
 
 try:
     from types import UnionType  # type: ignore[attr-defined]
@@ -15,8 +16,11 @@ from typing import List, Type, Union, Any, get_args, get_origin
 from simtypes.typing import ExpectedType
 
 
-def check(value: Any, type: Type[ExpectedType], strict: bool = False, lists_are_tuples: bool = False) -> TypeIs[ExpectedType]:
+def check(value: Any, type: Type[ExpectedType], strict: bool = False, lists_are_tuples: bool = False, pass_mocks: bool = True) -> TypeIs[ExpectedType]:
     if type is Any:  # type: ignore[attr-defined]
+        return True
+
+    elif (isinstance(value, Mock) or isinstance(value, MagicMock)) and pass_mocks:
         return True
 
     elif type is None:

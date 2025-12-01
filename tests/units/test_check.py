@@ -1,11 +1,12 @@
 import sys
+from unittest.mock import Mock, MagicMock
 
 try:
     from types import NoneType  # type: ignore[attr-defined]
 except ImportError:
     NoneType = type(None)  # type: ignore[misc]
 
-from typing import Optional, Any, Union
+from typing import List, Optional, Any, Union
 from collections.abc import Sequence
 
 import pytest
@@ -444,3 +445,50 @@ def test_lists_are_tuples_flag_is_true_in_strict_mode(subscribable_tuple_type, s
     assert check([[1, 2, 3], [4, 5, 6]], subscribable_tuple_type[subscribable_tuple_type[int, ...], ...], strict=True, lists_are_tuples=True)
     assert check(([1, 2, 3], [4, 5, 6]), subscribable_tuple_type[make_union(subscribable_tuple_type[str, ...], subscribable_tuple_type[int, ...]), ...], strict=True, lists_are_tuples=True)
     assert check({1: [1, 2, 3], 2: [4, 5, 6]}, subscribable_dict_type[int, make_union(subscribable_tuple_type[str, ...], subscribable_tuple_type[int, ...])], strict=True, lists_are_tuples=True)
+
+
+@pytest.mark.parametrize(
+    ['strict_mode'],
+    [
+        (False,),
+        (True,),
+    ],
+)
+@pytest.mark.parametrize(
+    ['addictional_parameters'],
+    [
+        ({'pass_mocks': True},),
+        ({},),
+    ],
+)
+def test_pass_mocks_when_its_on(strict_mode, list_type, addictional_parameters):
+    assert check(Mock(), int, strict=strict_mode, **addictional_parameters)
+    assert check(Mock(), str, strict=strict_mode, **addictional_parameters)
+    assert check(Mock(), list_type, strict=strict_mode, **addictional_parameters)
+
+    assert check(MagicMock(), int, strict=strict_mode, **addictional_parameters)
+    assert check(MagicMock(), str, strict=strict_mode, **addictional_parameters)
+    assert check(MagicMock(), list_type, strict=strict_mode, **addictional_parameters)
+
+    assert check(Mock(), Mock, strict=strict_mode, **addictional_parameters)
+    assert check(MagicMock(), MagicMock, strict=strict_mode, **addictional_parameters)
+
+
+@pytest.mark.parametrize(
+    ['strict_mode'],
+    [
+        (False,),
+        (True,),
+    ],
+)
+def test_pass_mocks_when_its_off(strict_mode, list_type):
+    assert not check(Mock(), int, strict=strict_mode, pass_mocks=False)
+    assert not check(Mock(), str, strict=strict_mode, pass_mocks=False)
+    assert not check(Mock(), list_type, strict=strict_mode, pass_mocks=False)
+
+    assert not check(MagicMock(), int, strict=strict_mode, pass_mocks=False)
+    assert not check(MagicMock(), str, strict=strict_mode, pass_mocks=False)
+    assert not check(MagicMock(), list_type, strict=strict_mode, pass_mocks=False)
+
+    assert check(Mock(), Mock, strict=strict_mode, pass_mocks=False)
+    assert check(MagicMock(), MagicMock, strict=strict_mode, pass_mocks=False)
