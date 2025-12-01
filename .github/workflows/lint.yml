@@ -44,7 +44,7 @@ jobs:
 
       - name: Run mypy
         shell: bash
-        run: mypy simtypes
+        run: mypy --strict simtypes
 
       - name: Run mypy for tests
         shell: bash

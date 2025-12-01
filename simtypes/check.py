@@ -2,7 +2,7 @@ from inspect import isclass
 from unittest.mock import Mock, MagicMock
 
 try:
-    from types import UnionType  # type: ignore[attr-defined]
+    from types import UnionType  # type: ignore[attr-defined, unused-ignore]
 except ImportError:  # pragma: no cover
     from typing import Union as UnionType  # type: ignore[assignment]
 
