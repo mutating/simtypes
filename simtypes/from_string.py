@@ -10,7 +10,7 @@ def from_string(value: str, expected_type: Type[ExpectedType]) -> ExpectedType:
     if not isinstance(value, str):
         raise ValueError(f'You can only pass a string as a string. You passed {type(value).__name__}.')
 
-    if expected_type is Any:
+    if expected_type is Any:  # type: ignore[comparison-overlap]
         return value  # type: ignore[return-value]
 
     origin_type = get_origin(expected_type)
@@ -20,14 +20,14 @@ def from_string(value: str, expected_type: Type[ExpectedType]) -> ExpectedType:
         error_message = f'The string "{value}" cannot be interpreted as a {type_name} of the specified format.'
 
         try:
-            result = loads(value)
+            result: ExpectedType = loads(value)
         except JSONDecodeError as e:
             raise TypeError(error_message) from e
 
-        if not check(result, expected_type, strict=True, lists_are_tuples=True):  # type: ignore[operator]
+        if check(result, expected_type, strict=True, lists_are_tuples=True):  # type: ignore[operator]
+            return result
+        else:
             raise TypeError(error_message)
-
-        return result
 
     elif expected_type is str:
         return value  # type: ignore[return-value]
