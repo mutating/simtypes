@@ -111,19 +111,35 @@ print(check(None, None))
 In normal mode, the contents of collections are not checked. However, if strict mode is activated, the contents of lists, dicts and tuples will also start to be checked:
 
 ```python
-print(check(['kek'], List[str]), strict=True)
+print(check(['kek'], List[str], strict=True))
 #> True
-print(check({'lol': 'kek'}, Dict[str, str]), strict=True)
+print(check({'lol': 'kek'}, Dict[str, str], strict=True))
 #> True
-print(check([1, 2, 3], List[str]), strict=True)
+print(check([1, 2, 3], List[str], strict=True))
 #> False
-print(check({'lol': 123}, Dict[str, str]), strict=True)
+print(check({'lol': 123}, Dict[str, str], strict=True))
 #> False
-print(check((1, 2, 3), Tuple[int, int, int]), strict=True)
+print(check((1, 2, 3), Tuple[int, int, int], strict=True))
 #> True
-print(check((1, 2, 3), Tuple[int, ...]), strict=True)
+print(check((1, 2, 3), Tuple[int, ...], strict=True))
 #> True
-print(check((1, 2, "text"), Tuple[int, ...]), strict=True)
+print(check((1, 2, "text"), Tuple[int, ...], strict=True))
+#> False
+```
+
+Mock objects are skipped during verification by default. If you want to disable this, use `pass_mocks=False`:
+
+```python
+from unittest.mock import Mock, MagicMock
+
+print(check(Mock(), str))
+#> True
+print(check(MagicMock(), int))
+#> True
+
+print(check(Mock(), str, pass_mocks=False))
+#> False
+print(check(MagicMock(), int, pass_mocks=False))
 #> False
 ```
 
