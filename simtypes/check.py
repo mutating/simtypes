@@ -17,7 +17,7 @@ from simtypes.typing import ExpectedType
 
 
 def check(value: Any, type: Type[ExpectedType], strict: bool = False, lists_are_tuples: bool = False, pass_mocks: bool = True) -> TypeIs[ExpectedType]:
-    if type is Any:  # type: ignore[attr-defined]
+    if type is Any:  # type: ignore[comparison-overlap]
         return True
 
     elif (isinstance(value, Mock) or isinstance(value, MagicMock)) and pass_mocks:
@@ -48,7 +48,7 @@ def check(value: Any, type: Type[ExpectedType], strict: bool = False, lists_are_
         return all(check(key, arguments[0], strict=strict, lists_are_tuples=lists_are_tuples) and check(subvalue, arguments[1], strict=strict, lists_are_tuples=lists_are_tuples) for key, subvalue in value.items())
 
     elif origin_type is tuple and strict:
-        types_to_check: List[Union[Type[list], Type[tuple]]] = [tuple] if not lists_are_tuples else [tuple, list]
+        types_to_check: List[Union[Type[list], Type[tuple]]] = [tuple] if not lists_are_tuples else [tuple, list]  # type: ignore[type-arg]
         if all(not isinstance(value, x) for x in types_to_check):
             return False
 
