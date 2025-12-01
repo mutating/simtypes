@@ -127,6 +127,22 @@ print(check((1, 2, "text"), Tuple[int, ...], strict=True))
 #> False
 ```
 
+Mock objects are skipped during verification by default. If you want to disable this, use `pass_mocks=False`:
+
+```python
+from unittest.mock import Mock, MagicMock
+
+print(check(Mock(), str))
+#> True
+print(check(MagicMock(), int))
+#> True
+
+print(check(Mock(), str, pass_mocks=False))
+#> False
+print(check(MagicMock(), int, pass_mocks=False))
+#> False
+```
+
 
 ## Special types
 
