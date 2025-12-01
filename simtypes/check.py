@@ -4,10 +4,10 @@ from unittest.mock import Mock, MagicMock
 try:
     from types import UnionType  # type: ignore[attr-defined, unused-ignore]
 except ImportError:  # pragma: no cover
-    from typing import Union as UnionType  # type: ignore[assignment]
+    from typing import Union as UnionType  # type: ignore[assignment, unused-ignore]
 
 try:
-    from typing import TypeIs  # type: ignore[attr-defined]
+    from typing import TypeIs  # type: ignore[attr-defined, unused-ignore]
 except ImportError:  # pragma: no cover
     from typing_extensions import TypeIs
 
