@@ -30,7 +30,7 @@ classifiers = [
     'Intended Audience :: Developers',
     'Topic :: Software Development :: Libraries',
 ]
-keywords = ['type check']
+keywords = ['type check', 'deserialization']
 
 [tool.setuptools.package-data]
 "simtypes" = ["py.typed"]
