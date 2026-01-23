@@ -322,8 +322,21 @@ def test_deserialize_datetetime():
         from_string('kek', datetime)
 
 
-def test_deserialize_list_or_tuple_with_one_datetetime(subscribable_list_type, subscribable_tuple_type):
+def test_deserialize_subscribable_collections_with_datetimes(subscribable_list_type, subscribable_tuple_type, subscribable_dict_type):
     isoformatted_datetime = datetime.now().isoformat()
 
     assert from_string(dumps([isoformatted_datetime]), subscribable_list_type[datetime]) == [datetime.fromisoformat(isoformatted_datetime)]
     assert from_string(dumps([isoformatted_datetime]), subscribable_tuple_type[datetime]) == (datetime.fromisoformat(isoformatted_datetime),)
+    assert from_string(dumps({isoformatted_datetime: isoformatted_datetime}), subscribable_dict_type[datetime, datetime]) == {datetime.fromisoformat(isoformatted_datetime): datetime.fromisoformat(isoformatted_datetime)}
+    assert from_string(dumps({isoformatted_datetime: isoformatted_datetime}), subscribable_dict_type[datetime, str]) == {datetime.fromisoformat(isoformatted_datetime): isoformatted_datetime}
+    assert from_string(dumps({isoformatted_datetime: isoformatted_datetime}), subscribable_dict_type[str, datetime]) == {isoformatted_datetime: datetime.fromisoformat(isoformatted_datetime)}
+
+
+def test_deserialize_subscribable_collections_with_dates(subscribable_list_type, subscribable_tuple_type, subscribable_dict_type):
+    isoformatted_date = date(2026, 1, 22).isoformat()
+
+    assert from_string(dumps([isoformatted_date]), subscribable_list_type[date]) == [date.fromisoformat(isoformatted_date)]
+    assert from_string(dumps([isoformatted_date]), subscribable_tuple_type[date]) == (date.fromisoformat(isoformatted_date),)
+    assert from_string(dumps({isoformatted_date: isoformatted_date}), subscribable_dict_type[date, date]) == {date.fromisoformat(isoformatted_date): date.fromisoformat(isoformatted_date)}
+    assert from_string(dumps({isoformatted_date: isoformatted_date}), subscribable_dict_type[date, str]) == {date.fromisoformat(isoformatted_date): isoformatted_date}
+    assert from_string(dumps({isoformatted_date: isoformatted_date}), subscribable_dict_type[str, date]) == {isoformatted_date: date.fromisoformat(isoformatted_date)}
