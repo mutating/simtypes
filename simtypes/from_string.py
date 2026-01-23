@@ -55,6 +55,7 @@ def convert_single_value(value: str, expected_type: Type[ExpectedType]) -> Expec
     raise TypeError(f'Serialization of the type {expected_type.__name__} you passed is not supported. Supported types: int, float, bool, list, dict, tuple.')
 
 
+# TODO: try to abstract fix_lists(), fix_tuples() and fix_dicts() to one function
 def fix_lists(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> Optional[List[Any]]:
     if not isinstance(collection, list) or len(type_hint_arguments) >= 2:
         return None
