@@ -1,5 +1,7 @@
 from math import inf, isnan
 from typing import Any
+from datetime import date, datetime
+from json import dumps
 
 import pytest
 from full_match import match
@@ -171,17 +173,17 @@ def test_get_list_value(list_type, subscribable_dict_type, subscribable_list_typ
 
 
 def test_get_tuple_value(tuple_type, subscribable_tuple_type, subscribable_dict_type):
-    assert from_string('[]', tuple_type) == []
-    assert from_string('[]', subscribable_tuple_type[int, ...]) == []
-    assert from_string('[]', subscribable_tuple_type[str, ...]) == []
+    assert from_string('[]', tuple_type) == ()
+    assert from_string('[]', subscribable_tuple_type[int, ...]) == ()
+    assert from_string('[]', subscribable_tuple_type[str, ...]) == ()
 
-    assert from_string('[1, 2, 3]', subscribable_tuple_type[int, ...]) == [1, 2, 3]
-    assert from_string('["lol", "kek"]', subscribable_tuple_type[str, ...]) == ["lol", "kek"]
-    assert from_string('[1, 2, 3]', subscribable_tuple_type[int, int, int]) == [1, 2, 3]
-    assert from_string('["lol", "kek"]', subscribable_tuple_type[str, str]) == ["lol", "kek"]
+    assert from_string('[1, 2, 3]', subscribable_tuple_type[int, ...]) == (1, 2, 3)
+    assert from_string('["lol", "kek"]', subscribable_tuple_type[str, ...]) == ("lol", "kek")
+    assert from_string('[1, 2, 3]', subscribable_tuple_type[int, int, int]) == (1, 2, 3)
+    assert from_string('["lol", "kek"]', subscribable_tuple_type[str, str]) == ("lol", "kek")
 
-    assert from_string('[["lol", "kek"], ["lol", "kek"]]', subscribable_tuple_type[subscribable_tuple_type[str, str], ...]) == [["lol", "kek"], ["lol", "kek"]]
-    assert from_string('[{"lol": "kek"}, {"lol": "kek"}]', subscribable_tuple_type[subscribable_dict_type[str, str], ...]) == [{'lol': 'kek'}, {'lol': 'kek'}]
+    assert from_string('[["lol", "kek"], ["lol", "kek"]]', subscribable_tuple_type[subscribable_tuple_type[str, str], ...]) == (("lol", "kek"), ("lol", "kek"))
+    assert from_string('[{"lol": "kek"}, {"lol": "kek"}]', subscribable_tuple_type[subscribable_dict_type[str, str], ...]) == ({'lol': 'kek'}, {'lol': 'kek'})
 
     with pytest.raises(TypeError, match=match('The string "[]" cannot be interpreted as a tuple of the specified format.')):
         from_string('[]', subscribable_tuple_type[int])
@@ -300,3 +302,28 @@ def test_get_dict_value(dict_type, subscribable_list_type, subscribable_dict_typ
 )
 def test_get_any(string):
     assert from_string(string, Any) == string
+
+
+def test_deserialize_date():
+    isoformatted_date = date(2026, 1, 22).isoformat()
+
+    assert from_string(isoformatted_date, date) == date.fromisoformat(isoformatted_date)
+
+    with pytest.raises(TypeError, match=match('The string "kek" cannot be interpreted as a date object.')):
+        from_string('kek', date)
+
+
+def test_deserialize_datetetime():
+    isoformatted_datetime = datetime.now().isoformat()
+
+    assert from_string(isoformatted_datetime, datetime) == datetime.fromisoformat(isoformatted_datetime)
+
+    with pytest.raises(TypeError, match=match('The string "kek" cannot be interpreted as a datetime object.')):
+        from_string('kek', datetime)
+
+
+def test_deserialize_list_or_tuple_with_one_datetetime(subscribable_list_type, subscribable_tuple_type):
+    isoformatted_datetime = datetime.now().isoformat()
+
+    assert from_string(dumps([isoformatted_datetime]), subscribable_list_type[datetime]) == [datetime.fromisoformat(isoformatted_datetime)]
+    assert from_string(dumps([isoformatted_datetime]), subscribable_tuple_type[datetime]) == (datetime.fromisoformat(isoformatted_datetime),)
