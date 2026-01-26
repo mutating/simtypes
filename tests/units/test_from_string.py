@@ -129,6 +129,7 @@ def test_get_bool_value():
 
 def test_get_list_value(list_type, subscribable_dict_type, subscribable_list_type):
     assert from_string('[]', list_type) == []
+    assert from_string('[1, 2, 3]', list_type) == [1, 2, 3]
     assert from_string('[]', subscribable_list_type[int]) == []
     assert from_string('[]', subscribable_list_type[str]) == []
 
@@ -174,6 +175,7 @@ def test_get_list_value(list_type, subscribable_dict_type, subscribable_list_typ
 
 def test_get_tuple_value(tuple_type, subscribable_tuple_type, subscribable_dict_type):
     assert from_string('[]', tuple_type) == ()
+    assert from_string('[1, 2, 3]', tuple_type) == (1, 2, 3)
     assert from_string('[]', subscribable_tuple_type[int, ...]) == ()
     assert from_string('[]', subscribable_tuple_type[str, ...]) == ()
 
@@ -230,6 +232,7 @@ def test_get_tuple_value(tuple_type, subscribable_tuple_type, subscribable_dict_
 
 def test_get_dict_value(dict_type, subscribable_list_type, subscribable_dict_type):
     assert from_string('{}', dict_type) == {}
+    assert from_string('{"lol": "kek"}', dict_type) == {'lol': 'kek'}
     assert from_string('{}', subscribable_dict_type[int, int]) == {}
     assert from_string('{}', subscribable_dict_type[str, str]) == {}
     assert from_string('{}', subscribable_dict_type[int, str]) == {}
@@ -347,7 +350,7 @@ def test_deserialize_subscribable_collections_with_dates(subscribable_list_type,
     assert from_string(dumps({isoformatted_date: isoformatted_date}), subscribable_dict_type[str, date]) == {isoformatted_date: date.fromisoformat(isoformatted_date)}
 
 
-def test_wrong_collection_content(subscribable_list_type, subscribable_tuple_type, subscribable_dict_type):
+def test_wrong_collection_content(subscribable_list_type, subscribable_tuple_type, subscribable_dict_type, dict_type, list_type, tuple_type):
     with pytest.raises(TypeError, match=match('The string "[123]" cannot be interpreted as a list of the specified format.')):
         from_string(dumps([123]), subscribable_list_type[date])
 
@@ -486,3 +489,16 @@ def test_wrong_collection_content(subscribable_list_type, subscribable_tuple_typ
 
     with pytest.raises(TypeError, match=match('The string "{"123": 123}" cannot be interpreted as a dict of the specified format.')):
         from_string(dumps({'123': 123}), subscribable_dict_type[int, date])
+
+
+    with pytest.raises(TypeError, match=match('The string "123" cannot be interpreted as a dict of the specified format.')):
+        from_string('123', dict_type)
+
+    with pytest.raises(TypeError, match=match('The string "[123]" cannot be interpreted as a dict of the specified format.')):
+        from_string('[123]', dict_type)
+
+    with pytest.raises(TypeError, match=match('The string "123" cannot be interpreted as a list of the specified format.')):
+        from_string('123', list_type)
+
+    with pytest.raises(TypeError, match=match('The string "123" cannot be interpreted as a tuple of the specified format.')):
+        from_string('123', tuple_type)
