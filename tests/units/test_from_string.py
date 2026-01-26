@@ -182,6 +182,9 @@ def test_get_tuple_value(tuple_type, subscribable_tuple_type, subscribable_dict_
     assert from_string('[1, 2, 3]', subscribable_tuple_type[int, int, int]) == (1, 2, 3)
     assert from_string('["lol", "kek"]', subscribable_tuple_type[str, str]) == ("lol", "kek")
 
+    assert from_string('[["lol", "kek"], ["lol", "kek"]]', subscribable_tuple_type[subscribable_tuple_type[str, str], subscribable_tuple_type[str, str]]) == (("lol", "kek"), ("lol", "kek"))
+    assert from_string('[{"lol": "kek"}, {"lol": "kek"}]', subscribable_tuple_type[subscribable_dict_type[str, str], subscribable_dict_type[str, str]]) == ({'lol': 'kek'}, {'lol': 'kek'})
+
     assert from_string('[["lol", "kek"], ["lol", "kek"]]', subscribable_tuple_type[subscribable_tuple_type[str, str], ...]) == (("lol", "kek"), ("lol", "kek"))
     assert from_string('[{"lol": "kek"}, {"lol": "kek"}]', subscribable_tuple_type[subscribable_dict_type[str, str], ...]) == ({'lol': 'kek'}, {'lol': 'kek'})
 
@@ -327,6 +330,7 @@ def test_deserialize_subscribable_collections_with_datetimes(subscribable_list_t
 
     assert from_string(dumps([isoformatted_datetime]), subscribable_list_type[datetime]) == [datetime.fromisoformat(isoformatted_datetime)]
     assert from_string(dumps([isoformatted_datetime]), subscribable_tuple_type[datetime]) == (datetime.fromisoformat(isoformatted_datetime),)
+    assert from_string(dumps([isoformatted_datetime]), subscribable_tuple_type[datetime, ...]) == (datetime.fromisoformat(isoformatted_datetime),)
     assert from_string(dumps({isoformatted_datetime: isoformatted_datetime}), subscribable_dict_type[datetime, datetime]) == {datetime.fromisoformat(isoformatted_datetime): datetime.fromisoformat(isoformatted_datetime)}
     assert from_string(dumps({isoformatted_datetime: isoformatted_datetime}), subscribable_dict_type[datetime, str]) == {datetime.fromisoformat(isoformatted_datetime): isoformatted_datetime}
     assert from_string(dumps({isoformatted_datetime: isoformatted_datetime}), subscribable_dict_type[str, datetime]) == {isoformatted_datetime: datetime.fromisoformat(isoformatted_datetime)}
@@ -337,6 +341,148 @@ def test_deserialize_subscribable_collections_with_dates(subscribable_list_type,
 
     assert from_string(dumps([isoformatted_date]), subscribable_list_type[date]) == [date.fromisoformat(isoformatted_date)]
     assert from_string(dumps([isoformatted_date]), subscribable_tuple_type[date]) == (date.fromisoformat(isoformatted_date),)
+    assert from_string(dumps([isoformatted_date]), subscribable_tuple_type[date, ...]) == (date.fromisoformat(isoformatted_date),)
     assert from_string(dumps({isoformatted_date: isoformatted_date}), subscribable_dict_type[date, date]) == {date.fromisoformat(isoformatted_date): date.fromisoformat(isoformatted_date)}
     assert from_string(dumps({isoformatted_date: isoformatted_date}), subscribable_dict_type[date, str]) == {date.fromisoformat(isoformatted_date): isoformatted_date}
     assert from_string(dumps({isoformatted_date: isoformatted_date}), subscribable_dict_type[str, date]) == {isoformatted_date: date.fromisoformat(isoformatted_date)}
+
+
+def test_wrong_collection_content(subscribable_list_type, subscribable_tuple_type, subscribable_dict_type):
+    with pytest.raises(TypeError, match=match('The string "[123]" cannot be interpreted as a list of the specified format.')):
+        from_string(dumps([123]), subscribable_list_type[date])
+
+    with pytest.raises(TypeError, match=match('The string "[123]" cannot be interpreted as a list of the specified format.')):
+        from_string(dumps([123]), subscribable_list_type[datetime])
+
+    with pytest.raises(TypeError, match=match('The string "[null]" cannot be interpreted as a list of the specified format.')):
+        from_string(dumps([None]), subscribable_list_type[datetime])
+
+    with pytest.raises(TypeError, match=match('The string "[null]" cannot be interpreted as a list of the specified format.')):
+        from_string(dumps([None]), subscribable_list_type[date])
+
+    with pytest.raises(TypeError, match=match('The string "["123"]" cannot be interpreted as a list of the specified format.')):
+        from_string(dumps(['123']), subscribable_list_type[date])
+
+    with pytest.raises(TypeError, match=match('The string "["123"]" cannot be interpreted as a list of the specified format.')):
+        from_string(dumps(['123']), subscribable_list_type[datetime])
+
+
+    with pytest.raises(TypeError, match=match('The string "[123]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps([123]), subscribable_tuple_type[date])
+
+    with pytest.raises(TypeError, match=match('The string "[123]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps([123]), subscribable_tuple_type[datetime])
+
+    with pytest.raises(TypeError, match=match('The string "[null]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps([None]), subscribable_tuple_type[datetime])
+
+    with pytest.raises(TypeError, match=match('The string "[null]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps([None]), subscribable_tuple_type[date])
+
+    with pytest.raises(TypeError, match=match('The string "["123"]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps(['123']), subscribable_tuple_type[datetime])
+
+    with pytest.raises(TypeError, match=match('The string "["123"]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps(['123']), subscribable_tuple_type[date])
+
+
+    with pytest.raises(TypeError, match=match('The string "[123]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps([123]), subscribable_tuple_type[date, ...])
+
+    with pytest.raises(TypeError, match=match('The string "[123]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps([123]), subscribable_tuple_type[datetime, ...])
+
+    with pytest.raises(TypeError, match=match('The string "[null]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps([None]), subscribable_tuple_type[datetime, ...])
+
+    with pytest.raises(TypeError, match=match('The string "[null]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps([None]), subscribable_tuple_type[date, ...])
+
+    with pytest.raises(TypeError, match=match('The string "["123"]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps(['123']), subscribable_tuple_type[datetime, ...])
+
+    with pytest.raises(TypeError, match=match('The string "["123"]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps(['123']), subscribable_tuple_type[date, ...])
+
+
+    with pytest.raises(TypeError, match=match('The string "{"kek": 123}" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps({'kek': 123}), subscribable_tuple_type[date])
+
+    with pytest.raises(TypeError, match=match('The string "{"kek": 123}" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps({'kek': 123}), subscribable_tuple_type[date, ...])
+
+    with pytest.raises(TypeError, match=match('The string "{"kek": 123}" cannot be interpreted as a list of the specified format.')):
+        from_string(dumps({'kek': 123}), subscribable_list_type[date])
+
+
+    with pytest.raises(TypeError, match=match('The string "[{"kek": "lol"}]" cannot be interpreted as a list of the specified format.')):
+        from_string(dumps([{'kek': 'lol'}]), subscribable_list_type[subscribable_dict_type[str, int]])
+
+    with pytest.raises(TypeError, match=match('The string "[{"kek": "lol"}]" cannot be interpreted as a list of the specified format.')):
+        from_string(dumps([{'kek': 'lol'}]), subscribable_list_type[subscribable_list_type[int]])
+
+
+    with pytest.raises(TypeError, match=match('The string "[{"kek": "lol"}]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps([{'kek': 'lol'}]), subscribable_tuple_type[subscribable_dict_type[str, int]])
+
+    with pytest.raises(TypeError, match=match('The string "[{"kek": "lol"}]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps([{'kek': 'lol'}]), subscribable_tuple_type[subscribable_list_type[int]])
+
+    with pytest.raises(TypeError, match=match('The string "[{"kek": "lol"}]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps([{'kek': 'lol'}]), subscribable_tuple_type[subscribable_list_type[int], ...])
+
+    with pytest.raises(TypeError, match=match('The string "[{"kek": "lol"}]" cannot be interpreted as a tuple of the specified format.')):
+        from_string(dumps([{'kek': 'lol'}]), subscribable_tuple_type[subscribable_dict_type[str, int], ...])
+
+
+    with pytest.raises(TypeError, match=match('The string "[123]" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps([123]), subscribable_dict_type[int, int])
+
+    with pytest.raises(TypeError, match=match('The string "["123"]" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps(['123']), subscribable_dict_type[int, int])
+
+    with pytest.raises(TypeError, match=match('The string "{"123": "123"}" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps({123: '123'}), subscribable_dict_type[int, int])
+
+    with pytest.raises(TypeError, match=match('The string "{"123": 123}" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps({'123': 123}), subscribable_dict_type[int, int])
+
+    with pytest.raises(TypeError, match=match('The string "{"123": {"123": "123"}}" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps({'123': {123: '123'}}), subscribable_dict_type[str, subscribable_dict_type[int, int]])
+
+    with pytest.raises(TypeError, match=match('The string "{"123": [123, 123]}" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps({'123': [123, 123]}), subscribable_dict_type[str, subscribable_dict_type[int, int]])
+
+    with pytest.raises(TypeError, match=match('The string "{"123": {"123": "123"}}" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps({'123': {123: '123'}}), subscribable_dict_type[str, subscribable_list_type[int]])
+
+
+    with pytest.raises(TypeError, match=match('The string "[123]" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps([123]), subscribable_dict_type[int, date])
+
+    with pytest.raises(TypeError, match=match('The string "[123]" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps([123]), subscribable_dict_type[int, datetime])
+
+    with pytest.raises(TypeError, match=match('The string "{"123": "123"}" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps({123: '123'}), subscribable_dict_type[int, datetime])
+
+    with pytest.raises(TypeError, match=match('The string "{"123": "123"}" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps({123: '123'}), subscribable_dict_type[datetime, str])
+
+    with pytest.raises(TypeError, match=match('The string "{"123": "123"}" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps({123: '123'}), subscribable_dict_type[int, date])
+
+    with pytest.raises(TypeError, match=match('The string "{"123": "123"}" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps({123: '123'}), subscribable_dict_type[date, str])
+
+    with pytest.raises(TypeError, match=match('The string "{"123": null}" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps({'123': None}), subscribable_dict_type[int, datetime])
+
+    with pytest.raises(TypeError, match=match('The string "{"123": null}" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps({'123': None}), subscribable_dict_type[int, date])
+
+    with pytest.raises(TypeError, match=match('The string "{"123": 123}" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps({'123': 123}), subscribable_dict_type[int, datetime])
+
+    with pytest.raises(TypeError, match=match('The string "{"123": 123}" cannot be interpreted as a dict of the specified format.')):
+        from_string(dumps({'123': 123}), subscribable_dict_type[int, date])
