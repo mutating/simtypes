@@ -511,3 +511,52 @@ def test_denial_sentinel(strict_mode):
     assert check(InnerNoneType(), SentinelType, strict=strict_mode)
     assert check(InnerNoneType(123), SentinelType, strict=strict_mode)
     assert check(InnerNoneType('lol'), SentinelType, strict=strict_mode)
+
+
+
+@pytest.mark.parametrize(
+    ['strict_mode'],
+    [
+        (False,),
+        (True,),
+    ],
+)
+def test_denial_innernonetype(strict_mode):
+    assert not check(123, InnerNoneType, strict=strict_mode)
+    assert not check('None', InnerNoneType, strict=strict_mode)
+    assert not check(None, InnerNoneType, strict=strict_mode)
+
+    assert check(InnerNone, InnerNoneType, strict=strict_mode)
+    assert check(InnerNoneType(), InnerNoneType, strict=strict_mode)
+    assert check(InnerNoneType(123), InnerNoneType, strict=strict_mode)
+    assert check(InnerNoneType('lol'), InnerNoneType, strict=strict_mode)
+
+
+@pytest.mark.parametrize(
+    ['strict_mode'],
+    [
+        (False,),
+        (True,),
+    ],
+)
+def test_denial_innernone(strict_mode):
+    assert not check(123, InnerNoneType(123), strict=strict_mode)
+    assert not check('None', InnerNoneType(123), strict=strict_mode)
+    assert not check(None, InnerNoneType(123), strict=strict_mode)
+
+    assert not check(123, InnerNoneType('123'), strict=strict_mode)
+    assert not check('None', InnerNoneType('123'), strict=strict_mode)
+    assert not check(None, InnerNoneType('123'), strict=strict_mode)
+
+    assert not check(123, InnerNone, strict=strict_mode)
+    assert not check('None', InnerNone, strict=strict_mode)
+    assert not check(None, InnerNone, strict=strict_mode)
+
+    assert not check(InnerNoneType(), InnerNoneType(), strict=strict_mode)
+    assert not check(InnerNoneType(), InnerNone, strict=strict_mode)
+    assert not check(InnerNoneType(123), InnerNoneType(1234), strict=strict_mode)
+    assert not check(InnerNoneType('lol'), InnerNoneType('lol-kek'), strict=strict_mode)
+
+    assert check(InnerNone, InnerNone, strict=strict_mode)
+    assert check(InnerNoneType(123), InnerNoneType(123), strict=strict_mode)
+    assert check(InnerNoneType('lol'), InnerNoneType('lol'), strict=strict_mode)
