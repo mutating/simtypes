@@ -178,7 +178,7 @@ The library also provides primitive deserialization. Conversion of strings into 
 - `float` - any floating-point numbers, including infinities and [`NaN`](https://en.wikipedia.org/wiki/NaN).
 - `bool`- the strings `"yes"`, `"True"`, and `"true"` are interpreted as `True`, while `"no"`, `"False"`, or `"false"` are interpreted as `False`.
 - `list` - lists in [`json`](https://en.wikipedia.org/wiki/JSON) format are expected.
-- `tuple` - lists in [`json`](https://en.wikipedia.org/wiki/JSON) format are expected. This is the only type where the value produced does not match the passed type, the returned value is always a list.
+- `tuple` - lists in [`json`](https://en.wikipedia.org/wiki/JSON) format are expected.
 - `dict` - dicts in [`json`](https://en.wikipedia.org/wiki/JSON) format are expected.
 
 Examples:
