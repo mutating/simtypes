@@ -11,6 +11,7 @@ from collections.abc import Sequence
 
 import pytest
 from full_match import match
+from denial import InnerNone, InnerNoneType, SentinelType
 
 from simtypes import check
 
@@ -492,3 +493,21 @@ def test_pass_mocks_when_its_off(strict_mode, list_type):
 
     assert check(Mock(), Mock, strict=strict_mode, pass_mocks=False)
     assert check(MagicMock(), MagicMock, strict=strict_mode, pass_mocks=False)
+
+
+@pytest.mark.parametrize(
+    ['strict_mode'],
+    [
+        (False,),
+        (True,),
+    ],
+)
+def test_denial_sentinel(strict_mode):
+    assert not check(123, SentinelType, strict=strict_mode)
+    assert not check('None', SentinelType, strict=strict_mode)
+
+    assert check(None, SentinelType, strict=strict_mode)
+    assert check(InnerNone, SentinelType, strict=strict_mode)
+    assert check(InnerNoneType(), SentinelType, strict=strict_mode)
+    assert check(InnerNoneType(123), SentinelType, strict=strict_mode)
+    assert check(InnerNoneType('lol'), SentinelType, strict=strict_mode)
