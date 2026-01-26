@@ -122,6 +122,7 @@ def fix_tuples(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> O
             return None
 
         for type_hint, element in zip(type_hint_arguments, collection):
+            type_hint_arguments = get_args(type_hint)
             origin_type = get_origin(type_hint)
             if any(x in (dict, list, tuple) for x in (type_hint, origin_type)):
                 fixed_element = fix_iterable_types(element, type_hint_arguments, origin_type, type_hint)
