@@ -92,7 +92,7 @@ def fix_tuples(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> O
         return None
 
     if not len(type_hint_arguments):
-        return collection
+        return tuple(collection)
 
     result = []
 
