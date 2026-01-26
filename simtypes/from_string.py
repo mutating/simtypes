@@ -183,7 +183,6 @@ def fix_dicts(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> Op
 
 def fix_iterable_types(collection: Union[List[Any], Tuple[Any, ...], Dict[Hashable, Any]], type_hint_arguments: Tuple[Any, ...], origin_type: Any, expected_type: Any) -> ExpectedType:
     if list in (origin_type, expected_type):
-
         result = fix_lists(collection, type_hint_arguments)
     elif tuple in (origin_type, expected_type):
         result = fix_tuples(collection, type_hint_arguments)
