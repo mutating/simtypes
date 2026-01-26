@@ -191,6 +191,8 @@ def fix_iterable_types(collection: Union[List[Any], Tuple[Any, ...], Dict[Hashab
             result = tuple(result)  # type: ignore[assignment]
     elif dict in (origin_type, expected_type):
         result = fix_dicts(collection, type_hint_arguments)  # type: ignore[assignment, arg-type]
+    else:
+        return None  # pragma: no cover
 
     return result
 
