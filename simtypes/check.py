@@ -28,9 +28,6 @@ def check(value: Any, type_hint: Type[ExpectedType], strict: bool = False, lists
     elif type_hint is None:
         return value is None
 
-    elif type_hint is SentinelType:
-        return value is None or isinstance(value, InnerNoneType)
-
     elif isinstance(type_hint, InnerNoneType):
         return type_hint == value
 
