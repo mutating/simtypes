@@ -13,7 +13,7 @@ except ImportError:  # pragma: no cover
 
 from typing import List, Type, Union, Any, get_args, get_origin
 
-from denial import InnerNoneType, SentinelType
+from denial import InnerNoneType
 
 from simtypes.typing import ExpectedType
 
