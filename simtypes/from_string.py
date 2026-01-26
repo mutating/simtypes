@@ -39,13 +39,13 @@ def convert_single_value(value: str, expected_type: Type[ExpectedType]) -> Expec
 
     if expected_type is datetime:
         try:
-            return datetime.fromisoformat(value)
+            return datetime.fromisoformat(value)  # type: ignore[return-value]
         except ValueError as e:
             raise TypeError(f'The string "{value}" cannot be interpreted as a datetime object.') from e
 
     if expected_type is date:
         try:
-            return date.fromisoformat(value)
+            return date.fromisoformat(value)  # type: ignore[return-value]
         except ValueError as e:
             raise TypeError(f'The string "{value}" cannot be interpreted as a date object.') from e
 
@@ -87,7 +87,7 @@ def fix_lists(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> Op
     return result
 
 
-def fix_tuples(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> Optional[Tuple[Any]]:
+def fix_tuples(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> Optional[Tuple[Any, ...]]:
     if not isinstance(collection, list):
         return None
 
@@ -142,7 +142,7 @@ def fix_tuples(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> O
     return tuple(result)
 
 
-def fix_dicts(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> Optional[List[Any]]:
+def fix_dicts(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> Optional[Dict[Hashable, Any]]:
     if not isinstance(collection, dict) or len(type_hint_arguments) >= 3 or len(type_hint_arguments) == 1:
         return None
 
@@ -182,15 +182,15 @@ def fix_dicts(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> Op
     return result
 
 
-def fix_iterable_types(collection: Union[List[Any], Tuple[Any, ...], Dict[Hashable, Any]], type_hint_arguments: Tuple[Any, ...], origin_type: Any, expected_type: Any) -> ExpectedType:
+def fix_iterable_types(collection: Union[List[Any], Tuple[Any, ...], Dict[Hashable, Any]], type_hint_arguments: Tuple[Any, ...], origin_type: Any, expected_type: Any) -> Optional[Union[List[Any], Tuple[Any, ...], Dict[Hashable, Any]]]:
     if list in (origin_type, expected_type):
-        result = fix_lists(collection, type_hint_arguments)
+        result = fix_lists(collection, type_hint_arguments)  # type: ignore[arg-type]
     elif tuple in (origin_type, expected_type):
-        result = fix_tuples(collection, type_hint_arguments)
+        result = fix_tuples(collection, type_hint_arguments)  # type: ignore[assignment, arg-type]
         if result is not None:
-            result = tuple(result)
+            result = tuple(result)  # type: ignore[assignment]
     elif dict in (origin_type, expected_type):
-        result = fix_dicts(collection, type_hint_arguments)
+        result = fix_dicts(collection, type_hint_arguments)  # type: ignore[assignment, arg-type]
 
     return result
 
@@ -209,7 +209,7 @@ def from_string(value: str, expected_type: Type[ExpectedType]) -> ExpectedType:
         error = TypeError(f'The string "{value}" cannot be interpreted as a {type_name} of the specified format.')
 
         try:
-            result: ExpectedType = loads(value)
+            result = loads(value)
         except JSONDecodeError as e:
             raise error from e
 
@@ -218,7 +218,7 @@ def from_string(value: str, expected_type: Type[ExpectedType]) -> ExpectedType:
             raise error
 
         if check(result, expected_type, strict=True):  # type: ignore[operator]
-            return result
+            return result  # type: ignore[no-any-return]
         else:
             raise error
 
