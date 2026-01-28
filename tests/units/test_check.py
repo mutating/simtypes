@@ -513,7 +513,6 @@ def test_denial_sentinel(strict_mode):
     assert check(InnerNoneType('lol'), SentinelType, strict=strict_mode)
 
 
-
 @pytest.mark.parametrize(
     ['strict_mode'],
     [
