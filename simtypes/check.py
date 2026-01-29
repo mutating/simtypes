@@ -13,6 +13,8 @@ except ImportError:  # pragma: no cover
 
 from typing import List, Type, Union, Any, get_args, get_origin
 
+from denial import InnerNoneType
+
 from simtypes.typing import ExpectedType
 
 
@@ -25,6 +27,9 @@ def check(value: Any, type_hint: Type[ExpectedType], strict: bool = False, lists
 
     elif type_hint is None:
         return value is None
+
+    elif isinstance(type_hint, InnerNoneType):
+        return type_hint == value
 
     origin_type = get_origin(type_hint)
 

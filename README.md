@@ -168,6 +168,15 @@ print(check(-11, NonNegativeInt))
 #> False
 ```
 
+In addition to other types, simtypes supports an extended type of sentinels from the [`denial`](https://github.com/pomponchik/denial/) library. In short, this is an extended `None`, for cases when we need to distinguish between situations where a value is undefined and situations where it is defined as undefined. Similar to `None`, objects of the `InnerNoneType` class can be used as type hints for themselves:
+
+```python
+from denial import InnerNoneType
+
+print(check(InnerNoneType('key'), InnerNoneType('key')))
+#> True
+```
+
 
 ## String deserialization
 
@@ -177,8 +186,9 @@ The library also provides primitive deserialization. Conversion of strings into 
 - `int` - any integers.
 - `float` - any floating-point numbers, including infinities and [`NaN`](https://en.wikipedia.org/wiki/NaN).
 - `bool`- the strings `"yes"`, `"True"`, and `"true"` are interpreted as `True`, while `"no"`, `"False"`, or `"false"` are interpreted as `False`.
+- `date` or `datetime` - strings representing, respectively, dates or dates + time in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
 - `list` - lists in [`json`](https://en.wikipedia.org/wiki/JSON) format are expected.
-- `tuple` - lists in [`json`](https://en.wikipedia.org/wiki/JSON) format are expected. This is the only type where the value produced does not match the passed type, the returned value is always a list.
+- `tuple` - lists in [`json`](https://en.wikipedia.org/wiki/JSON) format are expected.
 - `dict` - dicts in [`json`](https://en.wikipedia.org/wiki/JSON) format are expected.
 
 Examples:
@@ -222,13 +232,21 @@ print(from_string('no', bool))
 print(from_string('True', bool))
 #> True
 
+# dates and datetimes
+from datetime import datetime, date
+
+print(from_string('2026-01-27', date))
+#> 2026-01-27
+print(from_string('2026-01-27 01:47:29.982044', datetime))
+#> 2026-01-27 01:47:29.982044
+
 # collections
 print(from_string('[1, 2, 3]', list[int]))
 #> [1, 2, 3]
 print(from_string('[1, 2, 3]', tuple[int, ...]))
-#> [1, 2, 3]
+#> (1, 2, 3)
 print(from_string('{"123": [1, 2, 3]}', dict[str, tuple[int, ...]]))
-#> {"123": [1, 2, 3]}
+#> {'123': (1, 2, 3)}
 ```
 
 > 👀 If the passed string cannot be interpreted as an object of the specified type, a `TypeError` exception will be raised.
