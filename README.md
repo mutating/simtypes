@@ -168,7 +168,7 @@ print(check(-11, NonNegativeInt))
 #> False
 ```
 
-In addition to other types, simtypes supports an extended type of sentinels from the `denial` library. In short, this is an extended `None`, for cases when we need to distinguish between situations where a value is undefined and situations where it is defined as undefined. Similar to `None`, objects of the `InnerNoneType` class can be used as type hints for themselves:
+In addition to other types, simtypes supports an extended type of sentinels from the [`denial`](https://github.com/pomponchik/denial/) library. In short, this is an extended `None`, for cases when we need to distinguish between situations where a value is undefined and situations where it is defined as undefined. Similar to `None`, objects of the `InnerNoneType` class can be used as type hints for themselves:
 
 ```python
 from denial import InnerNoneType
