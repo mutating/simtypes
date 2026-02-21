@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "simtypes"
-version = "0.0.10"
+version = "0.0.11"
 authors = [{ name = "Evgeniy Blinov", email = "zheni-b@yandex.ru" }]
 description = 'Type checking in runtime without stupid games'
 readme = "README.md"
@@ -51,5 +51,5 @@ format.quote-style = "single"
 markers = ["mypy_testing"]
 
 [project.urls]
-'Source' = 'https://github.com/pomponchik/simtypes'
-'Tracker' = 'https://github.com/pomponchik/simtypes/issues'
+'Source' = 'https://github.com/mutating/simtypes'
+'Tracker' = 'https://github.com/mutating/simtypes/issues'
