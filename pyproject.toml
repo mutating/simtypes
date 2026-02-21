@@ -51,5 +51,5 @@ format.quote-style = "single"
 markers = ["mypy_testing"]
 
 [project.urls]
-'Source' = 'https://github.com/pomponchik/simtypes'
-'Tracker' = 'https://github.com/pomponchik/simtypes/issues'
+'Source' = 'https://github.com/mutating/simtypes'
+'Tracker' = 'https://github.com/mutating/simtypes/issues'
