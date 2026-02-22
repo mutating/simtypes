@@ -29,7 +29,6 @@ Python type checking tools are usually very complex. In this case, we have throw
 - [**String deserialization**](#string-deserialization)
 
 
-
 ## Why?
 
 It's been a long time since static type checking tools like [`mypy`](https://github.com/python/mypy) for `Python` have been available, and they've become very complex. The typing system has also become noticeably more complicated, providing us with more and more new types of annotations, new syntax and other tools. It seems that `Python` devs procrastinate endlessly, postponing all the really important [`CPyhton`](https://github.com/python/cpython) improvements in order to add more garbage to [`typing`](https://docs.python.org/3/library/typing.html).
