@@ -1,33 +1,32 @@
-from typing import List, Tuple, Dict, Type, Optional, Union, Any, get_origin, get_args
-from json import loads, JSONDecodeError
-from inspect import isclass
-from datetime import datetime, date
 from collections.abc import Hashable
+from datetime import date, datetime
+from inspect import isclass
+from json import JSONDecodeError, loads
+from typing import Any, Dict, List, Optional, Tuple, Type, Union, get_args, get_origin
 
 from simtypes import check
 from simtypes.typing import ExpectedType
 
 
-def convert_single_value(value: str, expected_type: Type[ExpectedType]) -> ExpectedType:
+def convert_single_value(value: str, expected_type: Type[ExpectedType]) -> ExpectedType:  # noqa: PLR0912, PLR0911, C901
     if expected_type is str:
         return value  # type: ignore[return-value]
 
-    elif expected_type is bool:
+    if expected_type is bool:
         if value in ('True', 'true', 'yes'):
             return True  # type: ignore[return-value]
-        elif value in ('False', 'false', 'no'):
+        if value in ('False', 'false', 'no'):
             return False  # type: ignore[return-value]
-        else:
-            raise TypeError(f'The string "{value}" cannot be interpreted as a boolean value.')
+        raise TypeError(f'The string "{value}" cannot be interpreted as a boolean value.')
 
-    elif expected_type is int:
+    if expected_type is int:
         try:
             return int(value)  # type: ignore[return-value]
         except ValueError as e:
             raise TypeError(f'The string "{value}" cannot be interpreted as an integer.') from e
 
     elif expected_type is float:
-        if value == '∞' or value == '+∞':
+        if value in {'∞', '+∞'}:
             value = 'inf'
         elif value == '-∞':
             value = '-inf'
@@ -87,7 +86,7 @@ def fix_lists(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> Op
     return result
 
 
-def fix_tuples(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> Optional[Tuple[Any, ...]]:
+def fix_tuples(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> Optional[Tuple[Any, ...]]:  # noqa: PLR0912, PLR0911, C901
     if not isinstance(collection, list):
         return None
 
@@ -158,7 +157,7 @@ def fix_dicts(collection: List[Any], type_hint_arguments: Tuple[Any, ...]) -> Op
         pair_result = {}
 
         for name, meta in pair.items():
-            element, type_hint = meta
+            element, type_hint = meta  # noqa: PLW2901
             origin_type = get_origin(type_hint)
             type_hint_arguments = get_args(type_hint)
             if any(x in (dict, list, tuple) for x in (type_hint, origin_type)):
@@ -221,7 +220,6 @@ def from_string(value: str, expected_type: Type[ExpectedType]) -> ExpectedType:
 
         if check(result, expected_type, strict=True):  # type: ignore[operator]
             return result  # type: ignore[no-any-return]
-        else:
-            raise error
+        raise error
 
     return convert_single_value(value, expected_type)

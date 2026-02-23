@@ -1,12 +1,7 @@
 import sys
-from typing import Tuple, List, Set, Dict, Union, Optional
+from typing import Dict, List, Optional, Set, Tuple, Union
 
 import pytest
-
-
-@pytest.fixture(params=[1, 2])
-def new_style(request):
-    return request.param
 
 
 @pytest.fixture(params=[Dict, dict])

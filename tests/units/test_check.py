@@ -1,17 +1,17 @@
 import sys
-from unittest.mock import Mock, MagicMock
+from unittest.mock import MagicMock, Mock
 
 try:
     from types import NoneType  # type: ignore[attr-defined]
 except ImportError:
     NoneType = type(None)  # type: ignore[misc]
 
-from typing import Optional, Any, Union
 from collections.abc import Sequence
+from typing import Any, Optional, Union
 
 import pytest
-from full_match import match
 from denial import InnerNone, InnerNoneType, SentinelType
+from full_match import match
 
 from simtypes import check
 
@@ -132,7 +132,7 @@ def test_bool_is_int(make_optional, make_union):
     assert check(False, make_optional(make_union(int, str)))
 
 
-def test_optional(new_style, tuple_type, list_type, make_optional):
+def test_optional(tuple_type, list_type, make_optional):
     assert check(None, make_optional(int))
     assert check(1, make_optional(int))
     assert check(0, make_optional(int))
@@ -185,11 +185,11 @@ def test_optional_union(make_union, make_optional, tuple_type):
 
 
 @pytest.mark.parametrize(
-    ['addictional_parameters'],
+    'addictional_parameters',
     [
-        ({},),
-        ({'strict': True},),
-        ({'strict': False},),
+        {},
+        {'strict': True},
+        {'strict': False},
     ],
 )
 def test_list_without_arguments(list_type, addictional_parameters):
@@ -210,11 +210,11 @@ def test_list_without_arguments(list_type, addictional_parameters):
 
 
 @pytest.mark.parametrize(
-    ['addictional_parameters'],
+    'addictional_parameters',
     [
-        ({},),
-        ({'strict': True},),
-        ({'strict': False},),
+        {},
+        {'strict': True},
+        {'strict': False},
     ],
 )
 def test_tuple_without_arguments(tuple_type, addictional_parameters):
@@ -240,11 +240,11 @@ def test_tuple_without_arguments(tuple_type, addictional_parameters):
 
 
 @pytest.mark.parametrize(
-    ['addictional_parameters'],
+    'addictional_parameters',
     [
-        ({},),
-        ({'strict': True},),
-        ({'strict': False},),
+        {},
+        {'strict': True},
+        {'strict': False},
     ],
 )
 def test_set_without_arguments(set_type, addictional_parameters):
@@ -265,11 +265,11 @@ def test_set_without_arguments(set_type, addictional_parameters):
 
 
 @pytest.mark.parametrize(
-    ['addictional_parameters'],
+    'addictional_parameters',
     [
-        ({},),
-        ({'strict': True},),
-        ({'strict': False},),
+        {},
+        {'strict': True},
+        {'strict': False},
     ],
 )
 def test_dict_without_arguments(dict_type, addictional_parameters):
@@ -449,17 +449,17 @@ def test_lists_are_tuples_flag_is_true_in_strict_mode(subscribable_tuple_type, s
 
 
 @pytest.mark.parametrize(
-    ['strict_mode'],
+    'strict_mode',
     [
-        (False,),
-        (True,),
+        False,
+        True,
     ],
 )
 @pytest.mark.parametrize(
-    ['addictional_parameters'],
+    'addictional_parameters',
     [
-        ({'pass_mocks': True},),
-        ({},),
+        {'pass_mocks': True},
+        {},
     ],
 )
 def test_pass_mocks_when_its_on(strict_mode, list_type, addictional_parameters):
@@ -476,10 +476,10 @@ def test_pass_mocks_when_its_on(strict_mode, list_type, addictional_parameters):
 
 
 @pytest.mark.parametrize(
-    ['strict_mode'],
+    'strict_mode',
     [
-        (False,),
-        (True,),
+        False,
+        True,
     ],
 )
 def test_pass_mocks_when_its_off(strict_mode, list_type):
@@ -496,10 +496,10 @@ def test_pass_mocks_when_its_off(strict_mode, list_type):
 
 
 @pytest.mark.parametrize(
-    ['strict_mode'],
+    'strict_mode',
     [
-        (False,),
-        (True,),
+        False,
+        True,
     ],
 )
 def test_denial_sentinel(strict_mode):
@@ -514,10 +514,10 @@ def test_denial_sentinel(strict_mode):
 
 
 @pytest.mark.parametrize(
-    ['strict_mode'],
+    'strict_mode',
     [
-        (False,),
-        (True,),
+        False,
+        True,
     ],
 )
 def test_denial_innernonetype(strict_mode):
@@ -532,10 +532,10 @@ def test_denial_innernonetype(strict_mode):
 
 
 @pytest.mark.parametrize(
-    ['strict_mode'],
+    'strict_mode',
     [
-        (False,),
-        (True,),
+        False,
+        True,
     ],
 )
 def test_denial_innernone(strict_mode):
