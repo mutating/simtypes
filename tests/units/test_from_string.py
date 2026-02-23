@@ -1,7 +1,7 @@
-from math import inf, isnan
-from typing import Any
 from datetime import date, datetime
 from json import dumps
+from math import inf, isnan
+from typing import Any
 
 import pytest
 from full_match import match
@@ -299,11 +299,11 @@ def test_get_dict_value(dict_type, subscribable_list_type, subscribable_dict_typ
 
 
 @pytest.mark.parametrize(
-    ['string'],
+    'string',
     [
-        ('{"lol": "kek"}',),
-        ('1',),
-        ('kek',),
+        '{"lol": "kek"}',
+        '1',
+        'kek',
     ],
 )
 def test_get_any(string):
@@ -350,7 +350,7 @@ def test_deserialize_subscribable_collections_with_dates(subscribable_list_type,
     assert from_string(dumps({isoformatted_date: isoformatted_date}), subscribable_dict_type[str, date]) == {isoformatted_date: date.fromisoformat(isoformatted_date)}
 
 
-def test_wrong_collection_content(subscribable_list_type, subscribable_tuple_type, subscribable_dict_type, dict_type, list_type, tuple_type):
+def test_wrong_collection_content(subscribable_list_type, subscribable_tuple_type, subscribable_dict_type, dict_type, list_type, tuple_type):  # noqa: PLR0915, PLR0913
     with pytest.raises(TypeError, match=match('The string "[123]" cannot be interpreted as a list of the specified format.')):
         from_string(dumps([123]), subscribable_list_type[date])
 
