@@ -17,23 +17,23 @@
 
 ![logo](https://raw.githubusercontent.com/mutating/simtypes/develop/docs/assets/logo_2.svg)
 
-Python type checking tools are usually very complex. In this case, we have thrown out almost all the places where there is a lot of complexity, and left only the most obvious and necessary things for runtime.
+Python type checking tools are usually very complex. In this case, we have thrown out almost all the places where there is a lot of complexity, and left only the most obvious and necessary things for runtime use.
 
 
 ## Table of contents
 
 - [**Why?**](#why)
 - [**Installation**](#installation)
-- [**Usage**](#usage)
+- [**Type checking**](#type-checking)
 - [**Special types**](#special-types)
 - [**String deserialization**](#string-deserialization)
 
 
 ## Why?
 
-It's been a long time since static type checking tools like [`mypy`](https://github.com/python/mypy) for `Python` have been available, and they've become very complex. The typing system has also become noticeably more complicated, providing us with more and more new types of annotations, new syntax and other tools. It seems that `Python` devs procrastinate endlessly, postponing all the really important [`CPyhton`](https://github.com/python/cpython) improvements in order to add more garbage to [`typing`](https://docs.python.org/3/library/typing.html).
+It's been a long time since static type checking tools like [`mypy`](https://github.com/python/mypy) for `Python` have been available, and they've become very complex. The typing system has also become noticeably more complicated, providing us with more and more new types of annotations, new syntax and other tools. It seems that `Python` devs procrastinate endlessly, postponing all the really important [`CPython`](https://github.com/python/cpython) improvements in order to add more garbage to [`typing`](https://docs.python.org/3/library/typing.html).
 
-A separate difficulty arises for those who try to use type annotations in runtime. Many data types make sense only in the context of static validation, and there is no way to verify these aspects in runtime. And some checks, although theoretically possible, would be extremely expensive. For example, to verify the validity of annotation `List[int]` in relation to a list, you would need to go through all its objects linearly to make sure that none of them violates the contract from the annotation.
+A separate difficulty arises for those who try to use type annotations at runtime. Many data types make sense only in the context of static validation, and there is no way to verify these aspects at runtime. And some checks, although theoretically possible, would be extremely expensive. For example, to verify the validity of annotation `List[int]` in relation to a list, you would need to iterate over all its elements to make sure that none of them violates the contract from the annotation.
 
 So, why do we need this package? There is only one function where you can pass a type or a type annotation + a specific value, and you will find out if one corresponds to the other. That's it! You can use this feature as a support when creating runtime type checking tools, however, we do not offer these tools here. You decide for yourself whether to wrap this function in syntactic sugar like decorators with automatic type checking.
 
@@ -66,7 +66,7 @@ pip install simtypes
 You can also quickly try out this and other packages without having to install using [instld](https://github.com/pomponchik/instld).
 
 
-## Usage
+## Type checking
 
 Import the `check` function:
 
@@ -74,7 +74,7 @@ Import the `check` function:
 from simtypes import check
 ```
 
-And pass there 2 arguments, a value + a type or type annotation:
+And pass there two arguments, a value + a type or type annotation:
 
 ```python
 print(check(1, int))
@@ -179,16 +179,16 @@ print(check(InnerNoneType('key'), InnerNoneType('key')))
 
 ## String deserialization
 
-The library also provides primitive deserialization. Conversion of strings into several basic types in any combinations is supported:
+The library also provides basic deserialization. Conversion of strings into several basic types in various combinations is supported:
 
-- `str`- any string can be interpreted as a `str` type.
+- `str` - any string can be interpreted as a `str` type.
 - `int` - any integers.
 - `float` - any floating-point numbers, including infinities and [`NaN`](https://en.wikipedia.org/wiki/NaN).
-- `bool`- the strings `"yes"`, `"True"`, and `"true"` are interpreted as `True`, while `"no"`, `"False"`, or `"false"` are interpreted as `False`.
+- `bool` - the strings `"yes"`, `"True"`, and `"true"` are interpreted as `True`, while `"no"`, `"False"`, or `"false"` are interpreted as `False`.
 - `date` or `datetime` - strings representing, respectively, dates or dates + time in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format.
-- `list` - lists in [`json`](https://en.wikipedia.org/wiki/JSON) format are expected.
-- `tuple` - lists in [`json`](https://en.wikipedia.org/wiki/JSON) format are expected.
-- `dict` - dicts in [`json`](https://en.wikipedia.org/wiki/JSON) format are expected.
+- `list` - lists in [`JSON`](https://en.wikipedia.org/wiki/JSON) format are expected.
+- `tuple` - lists in [`JSON`](https://en.wikipedia.org/wiki/JSON) format are expected.
+- `dict` - dicts in [`JSON`](https://en.wikipedia.org/wiki/JSON) format are expected.
 
 Examples:
 
