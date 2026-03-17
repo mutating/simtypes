@@ -74,7 +74,7 @@ Import the `check` function:
 from simtypes import check
 ```
 
-And pass there 2 arguments, a value + a type or type annotation:
+And pass there two arguments, a value + a type or type annotation:
 
 ```python
 print(check(1, int))
