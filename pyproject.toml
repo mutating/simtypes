@@ -11,7 +11,7 @@ readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
     'typing_extensions ; python_version <= "3.12"',
-    'denial>=0.0.5',
+    'denial>=0.0.13',
 ]
 classifiers = [
     "Operating System :: OS Independent",
