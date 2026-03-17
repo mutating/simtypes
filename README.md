@@ -24,7 +24,7 @@ Python type checking tools are usually very complex. In this case, we have throw
 
 - [**Why?**](#why)
 - [**Installation**](#installation)
-- [**Usage**](#usage)
+- [**Type checking**](#type-checking)
 - [**Special types**](#special-types)
 - [**String deserialization**](#string-deserialization)
 
@@ -66,7 +66,7 @@ pip install simtypes
 You can also quickly try out this and other packages without having to install using [instld](https://github.com/pomponchik/instld).
 
 
-## Usage
+## Type checking
 
 Import the `check` function:
 
